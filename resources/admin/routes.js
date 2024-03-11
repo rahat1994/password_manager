@@ -6,54 +6,22 @@ import Test from './Modules/Test/Test';
 import Support from './Modules/Misc/Support';
 import Docs from './Modules/Misc/Docs';
 import NotificationSettings from './Modules/NotificationSettings/NotificationSettings.vue';
-
+import Vault from './Modules/Vault/Vault.vue';
 export default [
     {
-        name: 'dashboard',
+        name: 'Vault',
         path: '/',
-        meta: {},
-        component: Dashboard
+        meta: {
+            title: 'Vault',
+        },
+        component: Vault,
     },
     {
-        name: 'connections',
-        path: '/connections',
-        meta: {},
-        component: Connections
-    },
-    {
-        name: 'connection',
-        path: '/connection',
-        meta: {},
-        component: Connection
-    },
-    {
-        name: 'test',
-        path: '/test',
-        meta: {},
-        component: Test
-    },
-    {
-        name: 'support',
-        path: '/support',
-        meta: {},
-        component: Support
-    },
-    {
-        name: 'logs',
-        path: '/logs',
-        meta: {},
-        component: Logs
-    },
-    {
-        name: 'docs',
-        path: '/documentation',
-        meta: {},
-        component: Docs
-    },
-    {
-        name: 'notification_settings',
-        path: '/notification-settings',
-        meta: {},
-        component: NotificationSettings
+        name: 'Tools',
+        path: '/tools',
+        meta: {
+            title: 'Tools',
+        },
+        component: Dashboard,
     }
 ];

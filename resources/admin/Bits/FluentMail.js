@@ -37,7 +37,9 @@ import {
     Collapse,
     CollapseItem,
     Skeleton,
-    SkeletonItem
+    SkeletonItem,
+    Submenu,
+    MenuItemGroup
 } from 'element-ui';
 
 Vue.use(Row);
@@ -74,6 +76,9 @@ Vue.use(ButtonGroup);
 Vue.use(TableColumn);
 Vue.use(CheckboxGroup);
 Vue.use(Loading.directive);
+Vue.use(Submenu);
+Vue.use(MenuItemGroup);
+
 
 Vue.prototype.$message = MessageBox.alert;
 Vue.prototype.$notify = Notification;

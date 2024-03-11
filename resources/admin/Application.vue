@@ -26,6 +26,8 @@
 </template>
 
 <script type="text/babel">
+import routes from './routes';
+
     export default {
         name: 'FluentMailApplication',
         data() {
@@ -44,32 +46,12 @@
         },
         methods: {
             defaultRoutes() {
-                return [
-                    {
-                        route: 'connections',
-                        title: this.$t('Settings')
-                    },
-                    {
-                        route: 'test',
-                        title: this.$t('Email Test')
-                    },
-                    {
-                        route: 'logs',
-                        title: this.$t('Email Logs')
-                    },
-                    {
-                        route: 'notification_settings',
-                        title: this.$t('Alerts')
-                    },
-                    {
-                        route: 'support',
-                        title: this.$t('About')
-                    },
-                    {
-                        route: 'docs',
-                        title: this.$t('Documentation')
-                    }
-                ];
+                return routes.map(route => {
+                    return {
+                        route: route.name,
+                        title: route.meta.title
+                    };
+                });
             },
             setMenus() {
                 this.items = this.applyFilters('fluentmail_top_menus', this.defaultRoutes());
