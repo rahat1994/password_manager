@@ -1,12 +1,23 @@
 <template>
-    <div class="content">
+    <div class="content" style="
+    background-color: #f5f7fa;
+    ">
         <el-row class="tac">
             <el-col :span="4">
                 <el-menu
                 default-active="2"
-                class="el-menu-vertical-demo"
+                class="el-menu-vertical-demo menu"
+                background-color="#545c64"
+                text-color="#fff" 
+                active-text-color="#ffd04b"
                 @open="handleOpen"
                 @close="handleClose">
+                <el-input
+                    placeholder="Search"
+                    v-model="searchTerm"
+                    prefix-icon="el-icon-search"
+                    clearable>
+                </el-input>
                 <el-submenu index="1">
                     <template slot="title">
                     <i class="el-icon-location"></i>
@@ -45,16 +56,16 @@
     </div>
 
 </template>
-
 <script type="text/babel">
     export default {
         name: 'Vault',
         data() {
             return {
-                logo: '',
+                searchTerm:"",
+                vaults: [],
                 items: [],
-                message: "Hello Vue.js!",
-                active: null
+                folders: [],
+                collections: [],
             }
         },
         watch: {
