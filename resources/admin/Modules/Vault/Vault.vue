@@ -21,11 +21,10 @@
                 <el-submenu index="1">
                     <template slot="title">
                     <i class="el-icon-location"></i>
-                    <span>Navigator One</span>
+                    <span>All Vaults</span>
                     </template>
                     <el-menu-item-group title="Group One">
-                    <el-menu-item index="1-1">item one</el-menu-item>
-                    <el-menu-item index="1-2">item one</el-menu-item>
+                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" index="1-1">{{ vault.name }}</el-menu-item>
                     </el-menu-item-group>
                     <el-menu-item-group title="Group Two">
                     <el-menu-item index="1-3">item three</el-menu-item>
@@ -63,7 +62,16 @@
             return {
                 message: "Hello there",
                 searchTerm:"",
-                vaults: [],
+                vaults: [
+                    {
+                        name: "Vault 1",
+                        id: 1
+                    },
+                    {
+                        name: "Vault 2",
+                        id: 2
+                    }
+                ],
                 items: [],
                 folders: [],
                 collections: [],
