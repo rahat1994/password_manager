@@ -37,7 +37,7 @@
                 </el-submenu>
                 <el-menu-item index="2">
                     <i class="el-icon-menu"></i>
-                    <span>Navigator Two</span>
+                    <span>{{ this.$t('All Vaults') }}</span>
                 </el-menu-item>
                 <el-menu-item index="3" disabled>
                     <i class="el-icon-document"></i>
@@ -61,6 +61,7 @@
         name: 'Vault',
         data() {
             return {
+                message: "Hello there",
                 searchTerm:"",
                 vaults: [],
                 items: [],
