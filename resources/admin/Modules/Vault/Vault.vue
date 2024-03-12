@@ -41,20 +41,101 @@
                 </el-menu-item>
                 </el-menu>
             </el-col>
-            <el-col :span="16" style="background-color: blueviolet;">
-                {{ message }}
+
+            <el-col :span="10">
+                <el-table
+                    :data="vaultItems"
+                    style="width: 100%">
+                    <el-table-column
+                    label="All"
+                    type="selection"
+                    width="55">
+                    </el-table-column>
+                    <el-table-column
+                    label="Name"
+                    width="180">
+                    <template slot-scope="scope">
+                        <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                        <br>
+                        <span style="margin-left: 15px">{{ scope.row.username }}</span>
+                    </template>
+                    </el-table-column>
+                    <el-table-column
+                    label="Owner"
+                    width="180">
+                    <template slot-scope="scope">
+                        <div slot="reference" class="name-wrapper">
+                            <el-tag size="medium">{{ scope.row.organisation.name }}</el-tag>
+                        </div>
+                    </template>
+                    </el-table-column>
+                    <el-table-column
+                        width="80"
+                        prop="select"
+                        label="options">
+                    <!-- <template slot-scope="scope">
+                        <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
+                    </template> -->
+                        <template slot-scope="scope">
+                            <el-dropdown trigger="click">
+                                <span class="el-dropdown-link">
+                                    <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item @click="handleDelete(scope.$index, scope.row)" icon="el-icon-plus">Action 1</el-dropdown-item>
+                                <el-dropdown-item icon="el-icon-circle-plus">Action 2</el-dropdown-item>
+                                <el-dropdown-item icon="el-icon-circle-plus-outline">Action 3</el-dropdown-item>
+                                <el-dropdown-item icon="el-icon-check">Action 4</el-dropdown-item>
+                                <el-dropdown-item icon="el-icon-circle-check">Action 5</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </template>
+                    
+                    </el-table-column>
+                </el-table>
             </el-col>
         </el-row>
     </div>
 </template>
 <style>
-.sidebar_search_inpot_wrapper{
-    padding: 10px;
-    background-color: #545c64;
-    margin-bottom: 10px;
+
+
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+  .el-dropdown-menu{
+    padding: 10px 0;
+    margin: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  }
+  .demonstration {
+    display: block;
+    color: #8492a6;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .el-dropdown-menu__item:not(.is-disabled):hover {
+    background-color: #ecf5ff;
+    color: #66b1ff;
+}
+.el-dropdown-menu__item {
+    list-style: none;
+    line-height: 36px;
+    padding: 0 20px;
+    margin: 0;
+    font-size: 14px;
+    color: #606266;
+    cursor: pointer;
+    outline: none;
 }
 </style>
-
 <script type="text/babel">
     export default {
         name: 'Vault',
@@ -62,6 +143,23 @@
             return {
                 message: "Hello there",
                 searchTerm:"",
+                tableData: [{
+                            date: '2016-05-03',
+                            name: 'Tom',
+                            address: 'No. 189, Grove St, Los Angeles'
+                            }, {
+                            date: '2016-05-02',
+                            name: 'Tom',
+                            address: 'No. 189, Grove St, Los Angeles'
+                            }, {
+                            date: '2016-05-04',
+                            name: 'Tom',
+                            address: 'No. 189, Grove St, Los Angeles'
+                            }, {
+                            date: '2016-05-01',
+                            name: 'Tom',
+                            address: 'No. 189, Grove St, Los Angeles'
+                        }],
                 vaults: [
                     {
                         name: "Vault 1",
@@ -76,7 +174,49 @@
                         id: 3
                     }
                 ],
-                items: [],
+                vaultItems: [
+                    {
+                        id: 1,
+                        name: "Hoyt Holland",
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+
+                    },
+                    {
+                        id: 2,
+                        name: "Hoyt Holland",
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+                    },
+                    {
+                        id: 3,
+                        name: "Hoyt Holland",
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+                    },
+                    {
+                        id: 4,
+                        name: "Hoyt Holland",
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+                    }
+                ],
                 folders: [],
                 collections: [],
             }
@@ -96,37 +236,11 @@
             handleClose(key, keyPath) {
                 console.log(key, keyPath);
             },
-            defaultRoutes() {
-                return [
-                    {
-                        route: 'connections',
-                        title: this.$t('Settings')
-                    },
-                    {
-                        route: 'test',
-                        title: this.$t('Email Test')
-                    },
-                    {
-                        route: 'logs',
-                        title: this.$t('Email Logs')
-                    },
-                    {
-                        route: 'notification_settings',
-                        title: this.$t('Alerts')
-                    },
-                    {
-                        route: 'support',
-                        title: this.$t('About')
-                    },
-                    {
-                        route: 'docs',
-                        title: this.$t('Documentation')
-                    }
-                ];
+            handleEdit(index, row) {
+                console.log(index, row);
             },
-            setMenus() {
-                this.items = this.applyFilters('fluentmail_top_menus', this.defaultRoutes());
-                this.setActive();
+            handleDelete(index, row) {
+                console.log(index, row);
             },
             setActive() {
                 this.active = this.$route.meta.parent || this.$route.name;
@@ -141,7 +255,7 @@
         created() {
             jQuery('.update-nag,.notice:not(.fluentsmtp_urgent), #wpbody-content > .updated, #wpbody-content > .error').remove();
             this.logo = `<div class='logo'>${this.brandLogo}</div>`;
-            this.setMenus();
+            // this.setMenus();
         }
     };
 </script>
