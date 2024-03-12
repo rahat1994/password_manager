@@ -1,8 +1,6 @@
 <template>
-    <div class="content" style="
-    background-color: #f5f7fa;
-    ">
-        <el-row class="tac">
+    <div class="content" style="background-color: #f5f7fa;">
+        <el-row class="tac" :gutter="20">
             <el-col :span="4">
                 <el-menu
                 default-active="2"
@@ -12,19 +10,22 @@
                 active-text-color="#ffd04b"
                 @open="handleOpen"
                 @close="handleClose">
-                <el-input
-                    placeholder="Search"
-                    v-model="searchTerm"
-                    prefix-icon="el-icon-search"
-                    clearable>
-                </el-input>
+                <div class="sidebar_search_inpot_wrapper">
+                    <el-input
+                        placeholder="Search"
+                        v-model="searchTerm"
+                        prefix-icon="el-icon-search"
+                        clearable>
+                    </el-input>
+                </div>
+
                 <el-submenu index="1">
                     <template slot="title">
                     <i class="el-icon-location"></i>
-                    <span>All Vaults</span>
+                    <span>{{ this.$t('All Vaults') }}</span>
                     </template>
-                    <el-menu-item-group title="Group One">
-                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" index="1-1">{{ vault.name }}</el-menu-item>
+                    <el-menu-item-group>
+                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="1-vault.id">{{ vault.name }}</el-menu-item>
                     </el-menu-item-group>
                     <el-menu-item-group title="Group Two">
                     <el-menu-item index="1-3">item three</el-menu-item>
@@ -38,23 +39,22 @@
                     <i class="el-icon-menu"></i>
                     <span>{{ this.$t('All Vaults') }}</span>
                 </el-menu-item>
-                <el-menu-item index="3" disabled>
-                    <i class="el-icon-document"></i>
-                    <span>Navigator Three</span>
-                </el-menu-item>
-                <el-menu-item index="4">
-                    <i class="el-icon-setting"></i>
-                    <span>Navigator Four</span>
-                </el-menu-item>
                 </el-menu>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="16" style="background-color: blueviolet;">
                 {{ message }}
             </el-col>
         </el-row>
     </div>
-
 </template>
+<style>
+.sidebar_search_inpot_wrapper{
+    padding: 10px;
+    background-color: #545c64;
+    margin-bottom: 10px;
+}
+</style>
+
 <script type="text/babel">
     export default {
         name: 'Vault',
@@ -70,6 +70,10 @@
                     {
                         name: "Vault 2",
                         id: 2
+                    },
+                    {
+                        name: "Vault 3",
+                        id: 3
                     }
                 ],
                 items: [],
