@@ -39,10 +39,16 @@ import {
     Skeleton,
     SkeletonItem,
     Submenu,
-    MenuItemGroup
+    MenuItemGroup,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem
 } from 'element-ui';
 
 Vue.use(Row);
+Vue.use(Dropdown);
+Vue.use(DropdownMenu);
+Vue.use(DropdownItem);
 Vue.use(Tag);
 Vue.use(Menu);
 Vue.use(Skeleton);
