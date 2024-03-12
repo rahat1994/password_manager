@@ -10,7 +10,7 @@
                 active-text-color="#ffd04b"
                 @open="handleOpen"
                 @close="handleClose">
-                <div class="sidebar_search_inpot_wrapper">
+                <div class="sidebar_search_input_wrapper">
                     <el-input
                         placeholder="Search"
                         v-model="searchTerm"
@@ -44,7 +44,7 @@
 
             <el-col :span="10">
                 <el-table
-                    :data="vaultItems"
+                    :data="displayVaultItems"
                     style="width: 100%">
                     <el-table-column
                     label="All"
@@ -82,24 +82,39 @@
                                     <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item @click="handleDelete(scope.$index, scope.row)" icon="el-icon-plus">Action 1</el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-circle-plus">Action 2</el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-circle-plus-outline">Action 3</el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-check">Action 4</el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-circle-check">Action 5</el-dropdown-item>
+                                    <el-dropdown-item @click="handleDelete(scope.$index, scope.row)" icon="el-icon-plus">Action 1</el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-circle-plus">Action 2</el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-circle-plus-outline">Action 3</el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-check">Action 4</el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-circle-check">Action 5</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </template>
                     
                     </el-table-column>
                 </el-table>
+                <el-pagination
+                    background
+                    @size-change="changePerPage"
+                    @current-change="changeCurrentPage"
+                    @currentPage="currentPage"
+                    :page-size="perPage"
+                    :page-sizes="[10, 20, 30, 40, 50, 100]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total"
+                >
+                </el-pagination>
             </el-col>
         </el-row>
     </div>
 </template>
 <style>
 
-
+    .sidebar_search_input_wrapper{
+        padding: 10px;
+        background-color: #545c64;
+        margin-bottom: 10px;
+    }
   .el-dropdown-link {
     cursor: pointer;
     color: #409EFF;
@@ -143,6 +158,10 @@
             return {
                 message: "Hello there",
                 searchTerm:"",
+                page: 1,
+                currentPage: 1,
+                perPage: 20,
+                total: 0,
                 tableData: [{
                             date: '2016-05-03',
                             name: 'Tom',
@@ -174,49 +193,8 @@
                         id: 3
                     }
                 ],
-                vaultItems: [
-                    {
-                        id: 1,
-                        name: "Hoyt Holland",
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
 
-                    },
-                    {
-                        id: 2,
-                        name: "Hoyt Holland",
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-                    },
-                    {
-                        id: 3,
-                        name: "Hoyt Holland",
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-                    },
-                    {
-                        id: 4,
-                        name: "Hoyt Holland",
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-                    }
-                ],
+                vaultItems: [],
                 folders: [],
                 collections: [],
             }
@@ -244,18 +222,44 @@
             },
             setActive() {
                 this.active = this.$route.meta.parent || this.$route.name;
-            }
+            },
+            changeCurrentPage(val) {
+                this.currentPage = val
+            },
+
+            changePerPage(val) {
+                this.perPage = val
+            },
         },
         computed: {
-            brandLogo() {
-                const src = this.appVars.brand_logo;
-                return `<img style="width:140px;" src="${src}" />`;
+            displayVaultItems() {
+
+                // if (this.search == null) return this.data
+                // this.filtered = this.data.filter(
+                //     (data) =>
+                //     !this.search ||
+                //     this.searchBy.some((item) => data[item].toString().toLowerCase().includes(this.search.toLowerCase()))
+                // )
+
+                this.total = this.vaultItems.length
+                return this.vaultItems.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
             }
         },
         created() {
-            jQuery('.update-nag,.notice:not(.fluentsmtp_urgent), #wpbody-content > .updated, #wpbody-content > .error').remove();
-            this.logo = `<div class='logo'>${this.brandLogo}</div>`;
-            // this.setMenus();
+            for (let i = 1; i <= 60; i++) {
+                this.vaultItems.push(            {
+                        id: i,
+                        name: `Hoyt Holland ${i}`,
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+
+                    });
+            }
+
         }
     };
 </script>
