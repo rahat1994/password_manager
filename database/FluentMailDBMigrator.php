@@ -1,7 +1,7 @@
 <?php
 
-require_once(ABSPATH.'wp-admin/includes/upgrade.php');
-require_once(FLUENTMAIL_PLUGIN_PATH.'database/migrations/EmailLogs.php');
+require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/EmailLogs.php');
 
 class FluentMailDBMigrator
 {
@@ -9,7 +9,7 @@ class FluentMailDBMigrator
     {
         global $wpdb;
 
-        if ($network_wide ) {
+        if ($network_wide) {
             if (function_exists('get_sites') && function_exists('get_current_network_id')) {
                 $site_ids = get_sites(['fields' => 'ids', 'network_id' => get_current_network_id(), 'number' => 0]);
             } else {
@@ -24,14 +24,18 @@ class FluentMailDBMigrator
                 self::migrate();
                 restore_current_blog();
             }
-        }  else {
+        } else {
             self::migrate();
         }
     }
 
     public static function migrate()
     {
-        \FluentMailMigrations\EmailLogs::migrate();
+        // \FluentMailMigrations\EmailLogs::migrate();
+        \FluentMailMigrations\Items::migrate();
+        \FluentMailMigrations\Folders::migrate();
+        \FluentMailMigrations\Organizations::migrate();
+        \FluentMailMigrations\UserOrganizations::migrate();
     }
 }
 
