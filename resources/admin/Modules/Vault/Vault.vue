@@ -42,7 +42,7 @@
                 </el-menu>
             </el-col>
 
-            <el-col :span="10" style="background-color:red">
+            <el-col :span="10">
 
                 <div class="content_header_wrapper">
                     <el-row>
@@ -88,17 +88,20 @@
                         <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
                     </template> -->
                         <template slot-scope="scope">
-                            <el-dropdown trigger="click">
+                            <el-dropdown trigger="click" @command="handleItemDropDownCommand">
                                 <span class="el-dropdown-link">
                                     <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
                                 </span>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item @click="handleDelete(scope.$index, scope.row)" icon="el-icon-plus">Action 1</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-circle-plus">Action 2</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-circle-plus-outline">Action 3</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-check">Action 4</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-circle-check">Action 5</el-dropdown-item>
-                                </el-dropdown-menu>
+                                <template>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item command="copy_username"  @click="copyUserName()" icon="el-icon-document-copy dropdown_item">{{ "Copy Username" }}</el-dropdown-item>
+                                        <el-dropdown-item command="copy_password" @click="copyPassword()" icon="el-icon-document-copy dropdown_item">{{ "Copy Password" }}</el-dropdown-item>
+                                        <el-dropdown-item divided command="delete_item" icon="el-icon-delete dropdown_item danger">
+                                            
+                                            <span class="danger"> {{ "Delete" }}</span>
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>                                
                             </el-dropdown>
                         </template>
                     
@@ -174,6 +177,12 @@
     background-color: #fff;
     margin-bottom: 10px;
 }
+.dropdown_item{
+    margin: 5px;
+}
+.danger{
+    color: red;
+}
 </style>
 <script type="text/babel">
     export default {
@@ -205,9 +214,20 @@
                 vaultItems: [],
                 folders: [],
                 collections: [],
+                currentItem: {},
             }
         },
         methods: {
+            handleItemDropDownCommand(command){
+                console.log(this.currentItem);
+                console.log(command);
+            },
+            copyUserName() {
+                console.log("Copy Username");
+            },
+            copyPassword() {
+                console.log("Copy Password");
+            },
             handleOpen(key, keyPath) {
                 this.message = "Hello there";
                 console.log(key, keyPath);
@@ -219,6 +239,7 @@
                 console.log(index, row);
             },
             handleDelete(index, row) {
+                this.currentItem = row;
                 console.log(index, row);
             },
             setActive() {
@@ -236,6 +257,7 @@
             displayVaultItems() {
 
                 if (this.searchTerm == ""){
+                    this.total = this.vaultItems.length
                     return this.vaultItems.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
                 } 
                 this.filtered = this.vaultItems.filter(
