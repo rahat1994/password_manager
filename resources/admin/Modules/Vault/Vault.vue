@@ -42,7 +42,18 @@
                 </el-menu>
             </el-col>
 
-            <el-col :span="10">
+            <el-col :span="10" style="background-color:red">
+
+                <div class="content_header_wrapper">
+                    <el-row>
+                        <el-col >
+                            <h2>{{ contentHeaderTitle }}</h2>
+                        </el-col>
+
+                    </el-row>
+                </div>
+
+
                 <el-table
                     :data="displayVaultItems"
                     style="width: 100%">
@@ -93,17 +104,19 @@
                     
                     </el-table-column>
                 </el-table>
-                <el-pagination
-                    background
-                    @size-change="changePerPage"
-                    @current-change="changeCurrentPage"
-                    @currentPage="currentPage"
-                    :page-size="perPage"
-                    :page-sizes="[10, 20, 30, 40, 50, 100]"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="total"
-                >
-                </el-pagination>
+
+                <div class="pagination_element_wrapper">
+                    <el-pagination
+                        background
+                        @current-change="changeCurrentPage"
+                        @currentPage="currentPage"
+                        :page-size="perPage"
+                        layout="total, prev, pager, next, jumper"
+                        :total="total"
+                    >
+                    </el-pagination>
+                </div>
+
             </el-col>
         </el-row>
     </div>
@@ -150,35 +163,29 @@
     cursor: pointer;
     outline: none;
 }
+.pagination_element_wrapper{
+    padding: 10px;
+    background-color: #fff;
+    margin-top: 10px;
+}
+
+.content_header_wrapper{
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
 </style>
 <script type="text/babel">
     export default {
         name: 'Vault',
         data() {
             return {
-                message: "Hello there",
+                contentHeaderTitle: "All Vault",
                 searchTerm:"",
                 page: 1,
                 currentPage: 1,
-                perPage: 20,
+                perPage: 8,
                 total: 0,
-                tableData: [{
-                            date: '2016-05-03',
-                            name: 'Tom',
-                            address: 'No. 189, Grove St, Los Angeles'
-                            }, {
-                            date: '2016-05-02',
-                            name: 'Tom',
-                            address: 'No. 189, Grove St, Los Angeles'
-                            }, {
-                            date: '2016-05-04',
-                            name: 'Tom',
-                            address: 'No. 189, Grove St, Los Angeles'
-                            }, {
-                            date: '2016-05-01',
-                            name: 'Tom',
-                            address: 'No. 189, Grove St, Los Angeles'
-                        }],
                 vaults: [
                     {
                         name: "Vault 1",
@@ -193,17 +200,11 @@
                         id: 3
                     }
                 ],
-
+                filtered: [],
+                searchBy: ["name", "username"],
                 vaultItems: [],
                 folders: [],
                 collections: [],
-            }
-        },
-        watch: {
-            '$route'(to, from) {
-                if (this.$route.name) {
-                    this.setActive();
-                }
             }
         },
         methods: {
@@ -234,20 +235,49 @@
         computed: {
             displayVaultItems() {
 
-                // if (this.search == null) return this.data
-                // this.filtered = this.data.filter(
-                //     (data) =>
-                //     !this.search ||
-                //     this.searchBy.some((item) => data[item].toString().toLowerCase().includes(this.search.toLowerCase()))
-                // )
+                if (this.searchTerm == ""){
+                    return this.vaultItems.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
+                } 
+                this.filtered = this.vaultItems.filter(
+                    (data) =>
+                    !this.searchTerm ||
+                    this.searchBy.some((item) => data[item].toString().toLowerCase().includes(this.searchTerm.toLowerCase()))
+                )
 
-                this.total = this.vaultItems.length
-                return this.vaultItems.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
+                this.total = this.filtered.length
+                return this.filtered.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
             }
         },
         created() {
             for (let i = 1; i <= 60; i++) {
-                this.vaultItems.push(            {
+
+                if(i == 10){
+                    this.vaultItems.push({
+                        id: i,
+                        name: `Rahat Holland ${i}`,
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+
+                    });
+                }
+                else if(i == 20){
+                    this.vaultItems.push({
+                        id: i,
+                        name: `Hoyt Holland ${i}`,
+                        username: "rahatname",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+
+                    });
+                } else{
+                    this.vaultItems.push({
                         id: i,
                         name: `Hoyt Holland ${i}`,
                         username: "myusername",
@@ -258,6 +288,9 @@
                         }
 
                     });
+                }
+
+
             }
 
         }
