@@ -1,7 +1,10 @@
 <?php
 
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/EmailLogs.php');
+require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/Items.php');
+require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/Folders.php');
+require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/Organizations.php');
+require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/UserOrganizations.php');
 
 class FluentMailDBMigrator
 {

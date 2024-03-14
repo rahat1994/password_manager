@@ -2,12 +2,13 @@
 
 namespace FluentMail\App\Http\Controllers;
 
+use FluentMail\App\Models\Folder;
 use FluentMail\App\Models\Logger;
 use FluentMail\Includes\Request\Request;
 
 class LoggerController extends Controller
 {
-    public function get(Request $request, Logger $logger)
+    public function get(Request $request, Folder $logger)
     {
         $this->verify();
 
@@ -41,7 +42,7 @@ class LoggerController extends Controller
             $count = count($id);
             $subject = $count > 1 ? "{$count} Logs" : 'Log';
         }
-        
+
         return $this->sendSuccess([
             'message' => "{$subject} deleted successfully."
         ]);
@@ -52,7 +53,7 @@ class LoggerController extends Controller
         $this->verify();
 
         try {
-            $this->app->addAction('wp_mail_failed', function($response) use ($logger, $request) {
+            $this->app->addAction('wp_mail_failed', function ($response) use ($logger, $request) {
                 $log = $logger->find($id = $request->get('id'));
                 $log['retries'] = $log['retries'] + 1;
                 $logger->updateLog($log, ['id' => $id]);
@@ -71,7 +72,6 @@ class LoggerController extends Controller
             }
 
             throw new \Exception('Something went wrong', 400);
-
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage()
@@ -85,7 +85,7 @@ class LoggerController extends Controller
         $logIds = $request->get('log_ids', []);
 
         $failedCount = 0;
-        $this->app->addAction('wp_mail_failed', function($response) use (&$failedCount) {
+        $this->app->addAction('wp_mail_failed', function ($response) use (&$failedCount) {
             $failedCount++;
         });
 
@@ -101,17 +101,16 @@ class LoggerController extends Controller
         }
         $message = 'Selected Emails have been proceed to send.';
 
-        if($failedCount) {
-            $message .= ' But '.$failedCount.' emails are reported to failed to send.';
+        if ($failedCount) {
+            $message .= ' But ' . $failedCount . ' emails are reported to failed to send.';
         }
 
-        if($failedInitiated) {
-            $message .= ' And '.$failedInitiated.' emails are failed to init the emails';
+        if ($failedInitiated) {
+            $message .= ' And ' . $failedInitiated . ' emails are failed to init the emails';
         }
 
         return $this->sendSuccess([
             'message' => $message
         ]);
-
     }
 }
