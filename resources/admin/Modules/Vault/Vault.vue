@@ -22,7 +22,7 @@
                 <el-submenu index="1">
                     <template slot="title">
                     <i class="el-icon-location"></i>
-                    <span>{{ this.$t('All Vaults') }}</span>
+                    <span>{{ $t('All Vaults') }}</span>
                     </template>
                     <el-menu-item-group>
                         <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="1-vault.id">{{ vault.name }}</el-menu-item>
@@ -37,26 +37,30 @@
                 </el-submenu>
                 <el-menu-item index="2">
                     <i class="el-icon-menu"></i>
-                    <span>{{ this.$t('All Vaults') }}</span>
+                    <span>{{ $t('All Vaults') }}</span>
                 </el-menu-item>
                 </el-menu>
             </el-col>
 
             <el-col :span="10">
 
-                <div class="content_header_wrapper">
-                    <el-row>
-                        <el-col >
-                            <h2>{{ contentHeaderTitle }}</h2>
-                        </el-col>
-
-                    </el-row>
+                <div class="fss_header">
+                    <VaultBulkActions 
+                        :selected="selectedVaultItems" 
+                        @on-bulk-action="handleVaultBulkAction" 
+                        v-if="selectedVaultItems.length"
+                    />
+                    <div 
+                    v-if="!selectedVaultItems.length"
+                    style="float:left;margin-top:6px;"
+                    >{{ contentHeaderTitle }}</div>            
                 </div>
 
-
                 <el-table
-                    :data="displayVaultItems"
-                    style="width: 100%">
+                        :data="displayVaultItems"
+                        style="width: 100%"
+                        @selection-change="handleSelectionChange"
+                    >
                     <el-table-column
                     label="All"
                     type="selection"
@@ -185,8 +189,13 @@
 }
 </style>
 <script type="text/babel">
+    import VaultBulkActions from "./VaultBulkActions.vue";
+
     export default {
         name: 'Vault',
+        components: {
+            VaultBulkActions
+        },
         data() {
             return {
                 contentHeaderTitle: "All Vault",
@@ -194,7 +203,7 @@
                 page: 1,
                 currentPage: 1,
                 perPage: 8,
-                total: 0,
+                total: 0,                
                 vaults: [
                     {
                         name: "Vault 1",
@@ -212,6 +221,7 @@
                 filtered: [],
                 searchBy: ["name", "username"],
                 vaultItems: [],
+                selectedVaultItems: [],
                 folders: [],
                 collections: [],
                 currentItem: {},
@@ -248,10 +258,16 @@
             changeCurrentPage(val) {
                 this.currentPage = val
             },
-
             changePerPage(val) {
                 this.perPage = val
             },
+            handleSelectionChange(val) {
+                console.log(val);
+                this.selectedVaultItems = val;
+            },
+            handleVaultBulkAction(action) {
+                console.log(action);
+            }
         },
         computed: {
             displayVaultItems() {
