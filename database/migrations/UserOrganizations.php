@@ -20,7 +20,7 @@ class UserOrganizations
         $organizationsTable = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'organizations';
 
         if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
-            $sql = "CREATE TABLE IF NOT EXISTS `user_organizations` (
+            $sql = "CREATE TABLE IF NOT EXISTS `$table` (
                 `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` bigint unsigned NOT NULL,
                 `organization_id` bigint unsigned NOT NULL,
