@@ -8,7 +8,7 @@ use FluentMail\Includes\Request\Request;
 
 class LoggerController extends Controller
 {
-    public function get(Request $request, Folder $logger)
+    public function get(Request $request, Logger $logger)
     {
         $this->verify();
 

@@ -5,6 +5,7 @@ require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/Items.php');
 require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/Folders.php');
 require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/Organizations.php');
 require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/UserOrganizations.php');
+require_once(FLUENTMAIL_PLUGIN_PATH . 'database/migrations/Collections.php');
 
 class FluentMailDBMigrator
 {
@@ -35,9 +36,10 @@ class FluentMailDBMigrator
     public static function migrate()
     {
         // \FluentMailMigrations\EmailLogs::migrate();
-        \FluentMailMigrations\Items::migrate();
-        \FluentMailMigrations\Folders::migrate();
         \FluentMailMigrations\Organizations::migrate();
+        \FluentMailMigrations\Collections::migrate();
+        \FluentMailMigrations\Folders::migrate();
+        \FluentMailMigrations\Items::migrate();
         \FluentMailMigrations\UserOrganizations::migrate();
     }
 }

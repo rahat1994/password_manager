@@ -14,7 +14,10 @@ class UserOrganizations
         global $wpdb;
         $charsetCollate = $wpdb->get_charset_collate();
 
-        $table = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'items';
+        $table = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'user_organizations';
+
+        $usersTable = $wpdb->prefix . 'users';
+        $organizationsTable = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'organizations';
 
         if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $sql = "CREATE TABLE IF NOT EXISTS `user_organizations` (
@@ -26,8 +29,8 @@ class UserOrganizations
                 PRIMARY KEY (`id`),
                 KEY `user_organizations_user_id_foreign` (`user_id`),
                 KEY `user_organizations_organization_id_foreign` (`organization_id`),
-                CONSTRAINT `user_organizations_organization_id_foreign` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`),
-                CONSTRAINT `user_organizations_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+                CONSTRAINT `user_organizations_organization_id_foreign` FOREIGN KEY (`organization_id`) REFERENCES `$organizationsTable` (`id`),
+                CONSTRAINT `user_organizations_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `$usersTable` (`id`)
                 ) $charsetCollate;";
 
             dbDelta($sql);

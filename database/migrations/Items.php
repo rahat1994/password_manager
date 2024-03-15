@@ -16,6 +16,13 @@ class Items
 
         $table = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'items';
 
+        // for foreign key constraints
+        $usersTable = $wpdb->prefix . 'users';
+        $organizationsTable = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'organizations';
+        $collectionsTable = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'collections';
+        $foldersTable = $wpdb->prefix . FLUENT_MAIL_DB_PREFIX . 'folders';
+
+
         if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $sql = "CREATE TABLE IF NOT EXISTS $table (
             `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -30,25 +37,21 @@ class Items
             `deleted` tinyint(1) NOT NULL,
             `created_at` timestamp NULL DEFAULT NULL,
             `updated_at` timestamp NULL DEFAULT NULL,
-            `type_id` bigint unsigned NOT NULL,
             `organization_id` bigint unsigned NOT NULL,
             `folder_id` bigint unsigned DEFAULT NULL,
             `collection_id` bigint unsigned NOT NULL,
             `user_id` bigint unsigned NOT NULL,
             `login_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
             PRIMARY KEY (`id`),
-            KEY `items_type_id_foreign` (`type_id`),
             KEY `items_organization_id_foreign` (`organization_id`),
             KEY `items_collection_id_foreign` (`collection_id`),
             KEY `items_user_id_foreign` (`user_id`),
             KEY `items_folder_id_foreign` (`folder_id`),
-            CONSTRAINT `items_collection_id_foreign` FOREIGN KEY (`collection_id`) REFERENCES `collections` (`id`),
-            CONSTRAINT `items_folder_id_foreign` FOREIGN KEY (`folder_id`) REFERENCES `folders` (`id`) ON DELETE SET NULL,
-            CONSTRAINT `items_organization_id_foreign` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`),
-            CONSTRAINT `items_type_id_foreign` FOREIGN KEY (`type_id`) REFERENCES `types` (`id`),
-            CONSTRAINT `items_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-            ) $charsetCollate;
-            ";
+            CONSTRAINT `items_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `$usersTable` (`ID`) ON DELETE CASCADE,
+            CONSTRAINT `items_collection_id_foreign` FOREIGN KEY (`collection_id`) REFERENCES `$collectionsTable` (`id`),
+            CONSTRAINT `items_folder_id_foreign` FOREIGN KEY (`folder_id`) REFERENCES `$foldersTable` (`id`) ON DELETE SET NULL,
+            CONSTRAINT `items_organization_id_foreign` FOREIGN KEY (`organization_id`) REFERENCES `$organizationsTable` (`id`)
+            ) $charsetCollate;";
 
             dbDelta($sql);
         }
