@@ -10,14 +10,14 @@
                 active-text-color="#ffd04b"
                 @open="handleOpen"
                 @close="handleClose">
-                <div class="sidebar_search_input_wrapper">
+                <!-- <div class="sidebar_search_input_wrapper">
                     <el-input
                         placeholder="Search"
                         v-model="searchTerm"
                         prefix-icon="el-icon-search"
                         clearable>
                     </el-input>
-                </div>
+                </div> -->
 
                 <el-submenu index="1">
                     <template slot="title">
@@ -50,10 +50,27 @@
                         @on-bulk-action="handleVaultBulkAction" 
                         v-if="selectedVaultItems.length"
                     />
+
                     <div 
                     v-if="!selectedVaultItems.length"
                     style="float:left;margin-top:6px;"
-                    >{{ contentHeaderTitle }}</div>            
+                    >{{ contentHeaderTitle }}</div>  
+
+                    <div style="float:right;">
+                        <el-input
+                            clearable
+                            size="small"
+                            v-model="filter.searchTerm"
+                            @clear="filter.searchTerm=''"
+                            @keyup.enter.native="fetch"
+                            :placeholder="$t('Type & press enter...')"
+                        >
+                            <el-button slot="append" icon="el-icon-search" @click="fetch"/>
+                        </el-input>
+                    </div> 
+
+                    <VaultHeaderButton />
+   
                 </div>
 
                 <el-table
@@ -62,13 +79,11 @@
                         @selection-change="handleSelectionChange"
                     >
                     <el-table-column
-                    label="All"
                     type="selection"
-                    width="55">
+                    width="50">
                     </el-table-column>
                     <el-table-column
-                    label="Name"
-                    width="180">
+                    :label="$t('Name')">
                     <template slot-scope="scope">
                         <span style="margin-left: 10px">{{ scope.row.name }}</span>
                         <br>
@@ -76,8 +91,7 @@
                     </template>
                     </el-table-column>
                     <el-table-column
-                    label="Owner"
-                    width="180">
+                    :label="$t('Owner')">
                     <template slot-scope="scope">
                         <div slot="reference" class="name-wrapper">
                             <el-tag size="medium">{{ scope.row.organisation.name }}</el-tag>
@@ -85,9 +99,8 @@
                     </template>
                     </el-table-column>
                     <el-table-column
-                        width="80"
                         prop="select"
-                        label="options">
+                        :label="$t('Options')">
                     <!-- <template slot-scope="scope">
                         <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
                     </template> -->
@@ -98,11 +111,10 @@
                                 </span>
                                 <template>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item command="copy_username"  @click="copyUserName()" icon="el-icon-document-copy dropdown_item">{{ "Copy Username" }}</el-dropdown-item>
-                                        <el-dropdown-item command="copy_password" @click="copyPassword()" icon="el-icon-document-copy dropdown_item">{{ "Copy Password" }}</el-dropdown-item>
-                                        <el-dropdown-item divided command="delete_item" icon="el-icon-delete dropdown_item danger">
-                                            
-                                            <span class="danger"> {{ "Delete" }}</span>
+                                        <el-dropdown-item command="copy_username"  @click="copyUserName()" icon="el-icon-document-copy dropdown_item">{{ $t("Copy Username") }}</el-dropdown-item>
+                                        <el-dropdown-item command="copy_password" @click="copyPassword()" icon="el-icon-document-copy dropdown_item">{{ $t("Copy Password") }}</el-dropdown-item>
+                                        <el-dropdown-item divided command="delete_item" icon="el-icon-delete dropdown_item danger">                                            
+                                            <span class="danger"> {{ $t("Delete") }}</span>
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>                                
@@ -190,16 +202,21 @@
 </style>
 <script type="text/babel">
     import VaultBulkActions from "./VaultBulkActions.vue";
-
+    import VaultHeaderButton from "./VaultHeaderButton.vue";
     export default {
         name: 'Vault',
         components: {
-            VaultBulkActions
+            VaultBulkActions,
+            VaultHeaderButton
         },
         data() {
             return {
                 contentHeaderTitle: "All Vault",
-                searchTerm:"",
+                filter: {
+                    searchTerm: '',
+                    folder:null,
+                    collections:null,
+                },
                 page: 1,
                 currentPage: 1,
                 perPage: 8,
@@ -272,14 +289,14 @@
         computed: {
             displayVaultItems() {
 
-                if (this.searchTerm == ""){
+                if (this.filter.searchTerm == ""){
                     this.total = this.vaultItems.length
                     return this.vaultItems.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
                 } 
                 this.filtered = this.vaultItems.filter(
                     (data) =>
-                    !this.searchTerm ||
-                    this.searchBy.some((item) => data[item].toString().toLowerCase().includes(this.searchTerm.toLowerCase()))
+                    !this.filter.searchTerm ||
+                    this.searchBy.some((item) => data[item].toString().toLowerCase().includes(this.filter.searchTerm.toLowerCase()))
                 )
 
                 this.total = this.filtered.length

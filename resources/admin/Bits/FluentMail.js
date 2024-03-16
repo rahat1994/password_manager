@@ -42,7 +42,8 @@ import {
     MenuItemGroup,
     Dropdown,
     DropdownMenu,
-    DropdownItem
+    DropdownItem,
+    Result
 } from 'element-ui';
 
 Vue.use(Row);
@@ -84,6 +85,7 @@ Vue.use(CheckboxGroup);
 Vue.use(Loading.directive);
 Vue.use(Submenu);
 Vue.use(MenuItemGroup);
+Vue.use(Result);
 
 
 Vue.prototype.$message = MessageBox.alert;
