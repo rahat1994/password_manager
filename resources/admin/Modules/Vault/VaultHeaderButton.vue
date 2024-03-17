@@ -42,18 +42,21 @@
 
         <el-dialog :title="$t('Create New Item')" :visible.sync="isItemCreationDialogVisible">
             <span>
-                <el-form ref="form" :model="form" label-width="120px">
+                <el-form ref="form" size="mini" :model="form" label-width="120px">
 
                     <el-form-item :label="$t('Item Type')">
-                        <el-select v-model="form.item_type">
-                            <el-option label="Login" value="login"></el-option>
-                            <el-option label="Card" value="card"></el-option>
-                            <el-option label="Identity" value="identity"></el-option>
-                            <el-option label="Secure note" value="secure_note"></el-option>
-                        </el-select>
+                        <el-col :span="24">
+                            <el-select v-model="form.item_type">
+                                <el-option label="Login" value="login"></el-option>
+                                <el-option label="Card" value="card"></el-option>
+                                <el-option label="Identity" value="identity"></el-option>
+                                <el-option label="Secure note" value="secure_note"></el-option>
+                            </el-select>
+                        </el-col>
+
                     </el-form-item>
 
-                    <el-form-item>
+                    <el-form-item :label="$t('Name & Folder')">
                         <el-col :span="12">
                             <el-input placeholder="Name" v-model="form.name" style="width: 100%;"></el-input>
                         </el-col>
@@ -63,41 +66,51 @@
                                 <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.name"></el-option> 
                             </el-select>
                         </el-col>
-                    </el-form-item>
-
-                    <el-form-item>
-                        <el-col :span="12">
-                            <el-input placeholder="Name" v-model="form.name" style="width: 100%;"></el-input>
-                        </el-col>
-
-                        <el-col :span="12">
-                            <el-select v-model="form.folder">
-                                <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.name"></el-option> 
-                            </el-select>
-                        </el-col>
-                    </el-form-item>  
+                    </el-form-item> 
                     
-                    <el-form-item>
+                    <el-form-item :label="$t('Username & password')">
                         <el-col :span="12">
-                            <el-input placeholder="Username" v-model="form.username" style="width: 100%;"></el-input>
+
+                            <el-input
+                                clearable
+                                size="small"
+                                v-model="form.username"
+                                @clear="form.username=''"
+                                @keyup.enter.native="fetch"
+                                :placeholder="$t('Type & press enter...')"
+                            >
+                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
+                            </el-input>
                         </el-col>
 
                         <el-col :span="12">
-                            <el-input placeholder="Password" v-model="form.password" style="width: 100%;"></el-input>
+                            <el-input
+                                clearable
+                                size="small"
+                                v-model="form.password"
+                                show-password
+                                :placeholder="$t('password')"
+                            >
+                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
+                            </el-input>
                         </el-col>
                     </el-form-item>
 
-                    <el-form-item>                        
-                        <el-input placeholder="URL" v-model="form.url" style="width: 100%;"></el-input>                        
-                    </el-form-item>
-
-                    <el-form-item label="Instant delivery">
-                        <el-switch v-model="form.delivery"></el-switch>
+                    <el-form-item :label="$t('URL')">
+                        <el-col>
+                            <el-input  placeholder="URL" v-model="form.url" style="width: 100%;"></el-input>    
+                        </el-col>                                                
                     </el-form-item>
 
                     <el-form-item label="Activity form">
                         <el-input type="textarea" v-model="form.desc"></el-input>
                     </el-form-item>
+                    <el-divider></el-divider>
+
+                    <div style="margin: 8px 0px;padding: 2px 5px;">
+                        <span>Protected by masterpass</span>
+                        <el-switch v-model="form.delivery"></el-switch>
+                    </div>
                     <el-form-item>
                         <el-button type="primary" @click="onSubmit">Create</el-button>
                         <el-button>Cancel</el-button>
