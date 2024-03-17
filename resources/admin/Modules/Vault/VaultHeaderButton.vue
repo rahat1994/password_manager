@@ -21,7 +21,7 @@
                     <el-col :sm="12" :lg="8">
                         <el-result icon="info" title="Warning Tip" subTitle="Please follow the instructions">
                         <template slot="extra">
-                            <el-button type="primary" icon="el-icon-plus">Folder</el-button>
+                            <el-button @click="isFolderCreationDialogVisible = true" type="primary" icon="el-icon-plus">Folder</el-button>
                         </template>
                         </el-result>
                     </el-col>
@@ -42,7 +42,7 @@
 
         <el-dialog :title="$t('Create New Item')" :visible.sync="isItemCreationDialogVisible">
             <span>
-                <el-form ref="form" size="mini" :model="form" label-width="120px">
+                <el-form ref="form" size="mini" :model="form" label-width="10rem">
 
                     <el-form-item :label="$t('Item Type')">
                         <el-col :span="24">
@@ -58,11 +58,11 @@
 
                     <el-form-item :label="$t('Name & Folder')">
                         <el-col :span="12">
-                            <el-input placeholder="Name" v-model="form.name" style="width: 100%;"></el-input>
+                            <el-input :placeholder="$t('Name')" v-model="form.name" style="width: 100%;"></el-input>
                         </el-col>
 
-                        <el-col :span="12">
-                            <el-select v-model="form.folder">
+                        <el-col :span="12" >
+                            <el-select v-model="form.folder" :placeholder="$t('Folder')">
                                 <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.name"></el-option> 
                             </el-select>
                         </el-col>
@@ -97,14 +97,27 @@
                     </el-form-item>
 
                     <el-form-item :label="$t('URL')">
-                        <el-col>
-                            <el-input  placeholder="URL" v-model="form.url" style="width: 100%;"></el-input>    
-                        </el-col>                                                
+                        <el-col :span="24">
+
+                            <el-input
+                                clearable
+                                size="small"
+                                v-model="form.url"
+                                @clear="form.url=''"
+                                :placeholder="$t('URL')"
+                            >
+                                <el-button style="width: 3rem;" slot="append" icon="el-icon-top-right" @click="()=>{}"/>
+                            </el-input>
+                        </el-col>
                     </el-form-item>
 
-                    <el-form-item label="Activity form">
-                        <el-input type="textarea" v-model="form.desc"></el-input>
+                    <el-form-item :label="$t('Description')">
+                        <el-col>
+                            <el-input type="textarea" v-model="form.desc"></el-input>
+                        </el-col>
+                        
                     </el-form-item>
+
                     <el-divider></el-divider>
 
                     <div style="margin: 8px 0px;padding: 2px 5px;">
@@ -112,10 +125,10 @@
                         <el-switch v-model="form.delivery"></el-switch>
                     </div>
                     <el-form-item>
-                        <el-button type="primary" @click="onSubmit">Create</el-button>
+                        <el-button type="primary" @click="onItemCreationFormSubmit">Create</el-button>
                         <el-button>Cancel</el-button>
                     </el-form-item>
-                    </el-form>
+                </el-form>
             </span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">Cancel</el-button>
@@ -123,15 +136,26 @@
             </span>
         </el-dialog>
 
+        <VaultFolderCreationDialog 
+            :isVisible="isFolderCreationDialogVisible" 
+            @on-folder-creation-dialog-closed="handleFolderCreationDialogClosed"    
+        />
+
+
     </div>
 </template>
 
 
 
 <script>
+import VaultFolderCreationDialog from './VaultFolderCreationDialog.vue';
+
 export default {
     name: 'VaultHeaderButton',
     props: ['selected'],
+    components: {
+        VaultFolderCreationDialog
+    },
     data() {
         return {
             isGeneralDialogVisible: false,
@@ -150,6 +174,7 @@ export default {
                     value: ''
                 }
             ],
+
             form: {
                 name: '',
                 item_type: '',
@@ -160,7 +185,8 @@ export default {
                 type: [],
                 url: '',
                 desc: ''
-            }
+            },
+            formLabelWidth: '10rem'
         };
     },
     methods: {
@@ -169,6 +195,16 @@ export default {
       },
       openItemCreationDialog() {
         this.isItemCreationDialogVisible = true;
+      },
+      onFolderFormSubmit() {
+        console.log('Folder form submitted');
+      },
+      onItemCreationFormSubmit() {
+        console.log('Item form submitted');
+      },
+      handleFolderCreationDialogClosed({closeFolderCreationDialog}){
+        console.log(closeFolderCreationDialog);
+        this.isFolderCreationDialogVisible = false;
       }
     },
 };
