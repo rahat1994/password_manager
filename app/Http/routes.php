@@ -56,3 +56,7 @@ $app->post('/logs/delete', 'LoggerController@delete');
 
 $app->post('install_plugin', 'SettingsController@installPlugin');
 $app->get('docs', 'DashboardController@getDocs');
+
+// password manger routes
+$app->get('folder', 'FolderController@index');
+$app->post('folder', 'FolderController@store');

@@ -7,7 +7,7 @@ use FluentMail\Includes\Support\Arr;
 
 class Folder extends Model
 {
-    private $table = FLUENT_MAIL_DB_PREFIX . 'folders';
+    private $table = null;
     protected $fillables = [
         'to',
         'from',
@@ -22,8 +22,7 @@ class Folder extends Model
     public function __construct()
     {
         parent::__construct();
-
-        $this->table = $this->db->prefix . FLUENT_MAIL_DB_PREFIX . 'email_logs';
+        $this->table = FLUENT_MAIL_DB_PREFIX . 'folders';
     }
 
     public function get($data)
