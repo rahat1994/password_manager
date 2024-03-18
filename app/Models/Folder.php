@@ -32,23 +32,33 @@ class Folder extends Model
         $query = $db->table($this->table)
             ->orderBy('id', 'DESC');
 
-        $result = $query->get();
-        $result['data'] = $this->formatResult($result['data']);
+        if (isset($data['user_id'])) {
+            $query->where('user_id', '=', $data['user_id']);
+        }
 
-        return $result;
+        $result = $query->get();
+        $result['data'] = $this->formatResult($result);
+
+        return $result['data'];
     }
 
     protected function formatResult($result)
     {
-        $result = is_array($result) ? $result : func_get_args();
-
+        if (is_array($result)) {
+            $result = $result;
+        } else {
+            // convert stdclass object to array
+            $result = json_decode(json_encode($result), true);
+        }
+        $temp = [];
         foreach ($result as $key => $row) {
-            $result[$key]            = array_map('maybe_unserialize', (array) $row);
-            $result[$key]['id']      = (int)$result[$key]['id'];
-            $result[$key]['name'] = (int)$result[$key]['name'];
+            $temp[$key] = [
+                'id' => $row->id,
+                'name' => $row->name
+            ];
         }
 
-        return $result;
+        return $temp;
     }
 
     public function add($data)

@@ -2,7 +2,8 @@
     <el-dialog  
         :title="$t('Create New Folder')" 
         :visible.sync="isVisible"
-        :before-close="onFolderCrreationDialogClosed"   
+        :before-close="onFolderCrreationDialogClosed" 
+        :close-on-click-modal="false"
     >
         <el-form ref="folderCreationForm" :rules="folderCreationFormRules"  :model="folderCreationForm" style="padding:3rem">
             <el-form-item prop="name" :label="$t('Promotion name')" :label-width="formLabelWidth">

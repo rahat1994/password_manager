@@ -43,7 +43,8 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Result
+    Result,
+    Divider
 } from 'element-ui';
 
 Vue.use(Row);
@@ -86,7 +87,7 @@ Vue.use(Loading.directive);
 Vue.use(Submenu);
 Vue.use(MenuItemGroup);
 Vue.use(Result);
-
+Vue.use(Divider);
 
 Vue.prototype.$message = MessageBox.alert;
 Vue.prototype.$notify = Notification;

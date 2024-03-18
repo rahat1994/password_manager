@@ -9,6 +9,17 @@ use FluentMail\Includes\Request\Request;
 
 class FolderController extends Controller
 {
+
+    public function index(Request $request, Folder $folder)
+    {
+        $this->verify();
+        return $this->send(
+            $folder->get([
+                'user_id' => get_current_user_id()
+            ])
+        );
+    }
+
     public function get(Request $request, Logger $logger)
     {
         $this->verify();
@@ -43,7 +54,7 @@ class FolderController extends Controller
             $count = count($id);
             $subject = $count > 1 ? "{$count} Logs" : 'Log';
         }
-        
+
         return $this->sendSuccess([
             'message' => "{$subject} deleted successfully."
         ]);
@@ -54,7 +65,7 @@ class FolderController extends Controller
         $this->verify();
 
         try {
-            $this->app->addAction('wp_mail_failed', function($response) use ($logger, $request) {
+            $this->app->addAction('wp_mail_failed', function ($response) use ($logger, $request) {
                 $log = $logger->find($id = $request->get('id'));
                 $log['retries'] = $log['retries'] + 1;
                 $logger->updateLog($log, ['id' => $id]);
@@ -73,7 +84,6 @@ class FolderController extends Controller
             }
 
             throw new \Exception('Something went wrong', 400);
-
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage()
@@ -87,7 +97,7 @@ class FolderController extends Controller
         $logIds = $request->get('log_ids', []);
 
         $failedCount = 0;
-        $this->app->addAction('wp_mail_failed', function($response) use (&$failedCount) {
+        $this->app->addAction('wp_mail_failed', function ($response) use (&$failedCount) {
             $failedCount++;
         });
 
@@ -103,18 +113,17 @@ class FolderController extends Controller
         }
         $message = 'Selected Emails have been proceed to send.';
 
-        if($failedCount) {
-            $message .= ' But '.$failedCount.' emails are reported to failed to send.';
+        if ($failedCount) {
+            $message .= ' But ' . $failedCount . ' emails are reported to failed to send.';
         }
 
-        if($failedInitiated) {
-            $message .= ' And '.$failedInitiated.' emails are failed to init the emails';
+        if ($failedInitiated) {
+            $message .= ' And ' . $failedInitiated . ' emails are failed to init the emails';
         }
 
         return $this->sendSuccess([
             'message' => $message
         ]);
-
     }
 
     public function store(Request $request, Folder $folder)
@@ -145,6 +154,5 @@ class FolderController extends Controller
         return $this->sendSuccess([
             'message' => __('New folder createed successfully ', 'fluent-smtp')
         ]);
-
     }
 }

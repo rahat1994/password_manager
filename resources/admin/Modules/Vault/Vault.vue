@@ -10,14 +10,6 @@
                 active-text-color="#ffd04b"
                 @open="handleOpen"
                 @close="handleClose">
-                <!-- <div class="sidebar_search_input_wrapper">
-                    <el-input
-                        placeholder="Search"
-                        v-model="searchTerm"
-                        prefix-icon="el-icon-search"
-                        clearable>
-                    </el-input>
-                </div> -->
 
                 <el-submenu index="1">
                     <template slot="title">
@@ -69,7 +61,9 @@
                         </el-input>
                     </div> 
 
-                    <VaultHeaderButton />
+                    <VaultHeaderButton 
+                        :folders="this.folders"
+                    />
    
                 </div>
 
@@ -220,7 +214,8 @@
                 page: 1,
                 currentPage: 1,
                 perPage: 8,
-                total: 0,                
+                total: 0,    
+                loading:false,
                 vaults: [
                     {
                         name: "Vault 1",
@@ -284,6 +279,18 @@
             },
             handleVaultBulkAction(action) {
                 console.log(action);
+            },
+            fetchFolders(){
+                const data = {};
+
+                this.$get('folder', data).then(res => {
+                    console.log(res);
+                    // this.
+                }).fail(error => {
+                    console.log(error);
+                }).always(() => {
+                    this.loading = false;
+                });
             }
         },
         computed: {
@@ -347,7 +354,7 @@
 
 
             }
-
+            this.fetchFolders();
         }
     };
 </script>
