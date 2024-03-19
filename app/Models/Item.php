@@ -10,13 +10,25 @@ class Folder extends Model
     private $table = null;
     protected $fillables = [
         'name',
-        'user_id'
+        'username',
+        'password',
+        'key',
+        'note',
+        'master_pass_secured',
+        'is_favourite',
+        'in_trash',
+        'deleted',
+        'organization_id',
+        'folder_id',
+        'collection_id',
+        'user_id',
+        'login_url'
     ];
 
     public function __construct()
     {
         parent::__construct();
-        $this->table = FLUENT_MAIL_DB_PREFIX . 'folders';
+        $this->table = FLUENT_MAIL_DB_PREFIX . 'items';
     }
 
     public function get($data)
@@ -48,7 +60,20 @@ class Folder extends Model
         foreach ($result as $key => $row) {
             $temp[$key] = [
                 'id' => $row->id,
-                'name' => $row->name
+                'name' => $row->name,
+                'username' => $row->username,
+                'password' => $row->password,
+                'key' => $row->key,
+                'note' => $row->note,
+                'master_pass_secured' => $row->master_pass_secured,
+                'is_favourite' => $row->is_favourite,
+                'in_trash' => $row->in_trash,
+                'deleted' => $row->deleted,
+                'organization_id' => $row->organization_id,
+                'folder_id' => $row->folder_id,
+                'collection_id' => $row->collection_id,
+                'user_id' => $row->user_id,
+                'login_url' => $row->login_url
             ];
         }
 

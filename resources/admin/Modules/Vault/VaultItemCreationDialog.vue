@@ -5,9 +5,13 @@
         :close-on-click-modal="false"
         >
         <span>
-            <el-form ref="form" size="mini" :model="form" label-width="10rem" style="padding:3rem">
+            <el-form 
+                ref="itemCreationForm" 
+                size="mini" 
+                :rules="itemCreationFormRules" 
+                :model="form" label-width="11rem" style="padding:2rem">
 
-                <el-form-item :label="$t('Item Type')">
+                <el-form-item :label="$t('Item Type')" prop="item_type">
                     <el-col :span="24">
                         <el-select v-model="form.item_type">
                             <el-option label="Login" value="login"></el-option>
@@ -19,47 +23,60 @@
 
                 </el-form-item>
 
-                <el-form-item :label="$t('Name & Folder')">
+                <el-form-item :label="$t('Name & Folder')" required>
                     <el-col :span="12">
-                        <el-input :placeholder="$t('Name')" v-model="form.name" style="width: 100%;"></el-input>
+                        <el-form-item prop="name">
+                            <el-input :placeholder="$t('Name')" v-model="form.name" style="width: 100%;"></el-input>
+                        </el-form-item>                        
                     </el-col>
 
                     <el-col :span="12" >
-                        <el-select v-model="form.folder" :placeholder="$t('Folder')">
-                            <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.name"></el-option> 
-                        </el-select>
+                        <el-form-item prop="folder">
+                            <el-select v-model="form.folder" :placeholder="$t('Folder')">
+                                <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.name"></el-option> 
+                            </el-select>
+                        </el-form-item>
+
                     </el-col>
                 </el-form-item> 
                 
-                <el-form-item :label="$t('Username & password')">
+                <el-form-item :label="$t('Username & password')" required>
                     <el-col :span="12">
 
-                        <el-input
-                            clearable
-                            size="small"
-                            v-model="form.username"
-                            @clear="form.username=''"
-                            @keyup.enter.native="fetch"
-                            :placeholder="$t('Type & press enter...')"
-                        >
-                            <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
-                        </el-input>
+                        <el-form-item prop="username">
+                            <el-input
+                                clearable
+                                size="small"
+                                v-model="form.username"
+                                @clear="form.username=''"
+                                @keyup.enter.native="fetch"
+                                :placeholder="$t('Username')"
+                            >
+                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
+                            </el-input>
+                        </el-form-item>
+
                     </el-col>
 
                     <el-col :span="12">
-                        <el-input
-                            clearable
-                            size="small"
-                            v-model="form.password"
-                            show-password
-                            :placeholder="$t('password')"
-                        >
-                            <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
-                        </el-input>
+
+                        <el-form-item prop="password">
+                            <el-input
+                                clearable
+                                size="small"
+                                v-model="form.password"
+                                show-password
+                                :placeholder="$t('password')"
+                            >
+                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
+                            </el-input>
+                        </el-form-item>
+
+
                     </el-col>
                 </el-form-item>
 
-                <el-form-item :label="$t('URL')">
+                <el-form-item :label="$t('URL')" prop="url">
                     <el-col :span="24">
 
                         <el-input
@@ -74,7 +91,7 @@
                     </el-col>
                 </el-form-item>
 
-                <el-form-item :label="$t('Description')">
+                <el-form-item :label="$t('Description')" prop="desc">
                     <el-col>
                         <el-input type="textarea" v-model="form.desc"></el-input>
                     </el-col>
@@ -88,7 +105,7 @@
                     <el-switch v-model="form.delivery"></el-switch>
                 </div>
                 <el-form-item style="float:right">
-                    <el-button type="primary" @click="onItemCreationFormSubmit">Create</el-button>
+                    <el-button type="primary" @click="onItemCreationFormSubmit('itemCreationForm')">Create</el-button>
                     <el-button>Cancel</el-button>
                 </el-form-item>
             </el-form>
@@ -121,11 +138,49 @@ export default {
                 desc: '',
                 delivery: false
             },
+            itemCreationFormRules:{
+                item_type: [
+                    { required: true, message: 'Please select the item type', trigger: 'blur' }
+                ],
+                name: [
+                    { required: true, message: 'Please input the name', trigger: 'blur' },
+                    { min: 3, max: 100, message: 'Length should be 3 to 100', trigger: 'blur' }
+                ],
+                folder: [
+                    { required: true, message: 'Please select the folder', trigger: 'blur' }
+                ],
+                username: [
+                    { required: true, message: 'Please input the username', trigger: 'blur' },
+                    { min: 3, max: 100, message: 'Length should be 3 to 100', trigger: 'blur' }
+                ],
+                password: [
+                    { required: true, message: 'Please input the password', trigger: 'blur' },
+                    { min: 3, max: 100, message: 'Length should be 3 to 100', trigger: 'blur' }
+                ],
+                url: [
+                    { required: true, message: 'Please input the url', trigger: 'blur' },
+                    { min: 3, max: 100, message: 'Length should be 3 to 100', trigger: 'blur' }
+                ],
+                desc: [
+                    { required: false, message: 'Please input the description', trigger: 'blur' },
+                    { min: 3, max: 100, message: 'Length should be 3 to 100', trigger: 'blur' }
+                ]
+            
+            }
         }
     },
     methods: {
-        onItemCreationFormSubmit() {
-            console.log(this.form);
+        onItemCreationFormSubmit(formName){
+            this.$refs[formName].validate((valid) => {
+                console.log(valid);
+                if (valid) {
+                    console.log(this.$refs[formName]);
+                    // this.createItem();
+                } else {
+                    return false;
+                }
+            });
+
         },
         onItemCreationFormClose() {
             this.$emit('on-item-creation-dialog-closed', {closeItemCreationDialog: true});

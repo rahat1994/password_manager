@@ -52,8 +52,6 @@
             :isVisible="isFolderCreationDialogVisible" 
             @on-folder-creation-dialog-closed="handleFolderCreationDialogClosed"    
         />
-
-
     </div>
 </template>
 
@@ -81,19 +79,6 @@ export default {
             isItemCreationDialogVisible: false,
             isFolderCreationDialogVisible: false,
             isCollectionCreationDialogVisible: false,
-            folders: [
-                {
-                    id: 1,
-                    name: 'Pass 2024',
-                    value: ''
-                },
-                {
-                    id: 2,
-                    name: 'Pass 2023',
-                    value: ''
-                }
-            ],
-
             form: {
                 name: '',
                 item_type: '',
@@ -131,5 +116,9 @@ export default {
       },
 
     },
+    created: function () {
+        console.log('VaultHeaderButton.vue created');
+        console.log(this.folders);
+    }
 };
 </script>

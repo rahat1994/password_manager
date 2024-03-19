@@ -282,10 +282,8 @@
             },
             fetchFolders(){
                 const data = {};
-
                 this.$get('folder', data).then(res => {
-                    console.log(res);
-                    // this.
+                    this.folders = res.data;
                 }).fail(error => {
                     console.log(error);
                 }).always(() => {
