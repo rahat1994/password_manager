@@ -102,7 +102,7 @@
 
                 <div style="margin: 8px 0px;padding: 2px 5px;">
                     <span>Protected by masterpass</span>
-                    <el-switch v-model="form.delivery"></el-switch>
+                    <el-switch v-model="form.masterPassProtected"></el-switch>
                 </div>
                 <el-form-item style="float:right">
                     <el-button type="primary" @click="onItemCreationFormSubmit('itemCreationForm')">Create</el-button>
@@ -136,7 +136,7 @@ export default {
                 password: '',
                 url: '',
                 desc: '',
-                delivery: false
+                masterPassProtected: false
             },
             itemCreationFormRules:{
                 item_type: [

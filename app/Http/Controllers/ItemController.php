@@ -6,6 +6,7 @@ use FluentMail\App\Models\Folder;
 use FluentMail\App\Models\Logger;
 use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Request\Request;
+use FluentSmtpLib\Google\Auth\Cache\Item;
 
 class ItemController extends Controller
 {
@@ -126,12 +127,43 @@ class ItemController extends Controller
         ]);
     }
 
-    public function store(Request $request, Folder $folder)
+    public function store(Request $request,  Item $item, Folder $folder)
     {
         $this->verify();
 
-        $name = sanitize_text_field($request->get('name'));
+        $itemType = $request->get('item_type');
 
+        $validItemTypes = ['type1', 'type2', 'type3'];
+        if (!in_array($itemType, $validItemTypes)) {
+            return $this->sendError([
+                'message' => __('Invalid item type.', 'fluent-smtp')
+            ]);
+        }
+
+        $folderId = $request->get('folder');
+        // get all the folders from this user
+        $folders = $folder->get([
+            'user_id' => get_current_user_id()
+        ]);
+
+        if (empty($folders)) {
+            return $this->sendError([
+                'message' => __('Please create a folder first.', 'fluent-smtp')
+            ]);
+        }
+        // check if the folder exists
+        if (!in_array($folderId, array_column($folders, 'id'))) {
+            return $this->sendError([
+                'message' => __('Invalid folder.', 'fluent-smtp')
+            ]);
+        }
+
+        $name = sanitize_text_field($request->get('name'));
+        $username = sanitize_text_field($request->get('username'));
+        $password = sanitize_text_field($request->get('password'));
+        $url = sanitize_text_field($request->get('url'));
+        $desc = sanitize_text_field($request->get('desc'));
+        $masterPassProtected = $request->get('delivery') ? true : false;
 
         if (empty($name) || strlen($name) < 3 || strlen($name) > 100) {
             return $this->sendError([
@@ -139,12 +171,47 @@ class ItemController extends Controller
             ]);
         }
 
+        if (empty($username) || strlen($username) < 3 || strlen($username) > 100) {
+            return $this->sendError([
+                'message' => __('Please provide a valid Username. It should be between 3 to 100 characters.', 'fluent-smtp')
+            ]);
+        }
+
+        if (empty($password) || strlen($password) < 8 || strlen($password) > 100) {
+            return $this->sendError([
+                'message' => __('Please provide a valid Password. It should be between 8 to 100 characters.', 'fluent-smtp')
+            ]);
+        }
+
+        if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+            return $this->sendError([
+                'message' => __('Please provide a valid URL.', 'fluent-smtp')
+            ]);
+        }
+
+        if (empty($desc) || strlen($desc) < 3 || strlen($desc) > 500) {
+            return $this->sendError([
+                'message' => __('Please provide a valid Description. It should be between 3 to 500 characters.', 'fluent-smtp')
+            ]);
+        }
+
+        if (!is_bool($masterPassProtected)) {
+            return $this->sendError([
+                'message' => __('Please provide a valid Delivery option.', 'fluent-smtp')
+            ]);
+        }
+
         $data = [
             'name' => $name,
+            'username' => $username,
+            'password' => $password,
+            'login_url' => $url,
+            'desc' => $desc,
+            'master_pass_secured' => $masterPassProtected,
             'user_id' => get_current_user_id()
         ];
 
-        $result = $folder->add($data);
+        $result = $$item->add($data);
 
         if (is_wp_error($result)) {
             return $this->sendError([
