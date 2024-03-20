@@ -1,7 +1,7 @@
 <template>
     <div class="content" style="background-color: #f5f7fa;">
         <el-row class="tac" :gutter="20">
-            <el-col :span="4">
+            <el-col :span="6">
                 <el-menu
                 default-active="2"
                 class="el-menu-vertical-demo menu"
@@ -34,7 +34,7 @@
                 </el-menu>
             </el-col>
 
-            <el-col :span="10">
+            <el-col :span="18">
 
                 <div class="fss_header">
                     <VaultBulkActions 

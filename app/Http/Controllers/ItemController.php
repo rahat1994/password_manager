@@ -4,9 +4,9 @@ namespace FluentMail\App\Http\Controllers;
 
 use FluentMail\App\Models\Folder;
 use FluentMail\App\Models\Logger;
-use FluentMail\App\Models\Settings;
+use FluentMail\App\Models\Item;
 use FluentMail\Includes\Request\Request;
-use FluentSmtpLib\Google\Auth\Cache\Item;
+use FluentSmtpLib\Google\Auth\Cache\Item as CacheItem;
 
 class ItemController extends Controller
 {
@@ -21,12 +21,12 @@ class ItemController extends Controller
         );
     }
 
-    public function get(Request $request, Logger $logger)
+    public function get(Request $request, Item $item)
     {
         $this->verify();
 
         return $this->send(
-            $logger->get(
+            $item->get(
                 $request->except(['nonce', 'action'])
             )
         );
@@ -133,7 +133,7 @@ class ItemController extends Controller
 
         $itemType = $request->get('item_type');
 
-        $validItemTypes = ['type1', 'type2', 'type3'];
+        $validItemTypes = ['login', 'card', 'identity', 'securenote'];
         if (!in_array($itemType, $validItemTypes)) {
             return $this->sendError([
                 'message' => __('Invalid item type.', 'fluent-smtp')
@@ -144,13 +144,14 @@ class ItemController extends Controller
         // get all the folders from this user
         $folders = $folder->get([
             'user_id' => get_current_user_id()
-        ]);
+        ])['data'];
 
         if (empty($folders)) {
             return $this->sendError([
                 'message' => __('Please create a folder first.', 'fluent-smtp')
             ]);
         }
+
         // check if the folder exists
         if (!in_array($folderId, array_column($folders, 'id'))) {
             return $this->sendError([
@@ -161,7 +162,7 @@ class ItemController extends Controller
         $name = sanitize_text_field($request->get('name'));
         $username = sanitize_text_field($request->get('username'));
         $password = sanitize_text_field($request->get('password'));
-        $url = sanitize_text_field($request->get('url'));
+        $url = esc_url_raw($request->get('url')) === $request->get('url') ? $request->get('url') : '';
         $desc = sanitize_text_field($request->get('desc'));
         $masterPassProtected = $request->get('delivery') ? true : false;
 
@@ -183,7 +184,7 @@ class ItemController extends Controller
             ]);
         }
 
-        if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+        if (empty($url)) {
             return $this->sendError([
                 'message' => __('Please provide a valid URL.', 'fluent-smtp')
             ]);
@@ -206,12 +207,15 @@ class ItemController extends Controller
             'username' => $username,
             'password' => $password,
             'login_url' => $url,
-            'desc' => $desc,
+            'note' => $desc,
+            'folder_id' => $folderId,
+            'collection_id' => 1,
+            'organization_id' => 1,
             'master_pass_secured' => $masterPassProtected,
             'user_id' => get_current_user_id()
         ];
 
-        $result = $$item->add($data);
+        $result = $item->add($data);
 
         if (is_wp_error($result)) {
             return $this->sendError([
@@ -220,7 +224,7 @@ class ItemController extends Controller
         }
 
         return $this->sendSuccess([
-            'message' => __('New folder createed successfully ', 'fluent-smtp')
+            'message' => __('New Item createed successfully ', 'fluent-smtp')
         ]);
     }
 }

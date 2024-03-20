@@ -33,7 +33,7 @@
                     <el-col :span="12" >
                         <el-form-item prop="folder">
                             <el-select v-model="form.folder" :placeholder="$t('Folder')">
-                                <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.name"></el-option> 
+                                <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.id"></el-option> 
                             </el-select>
                         </el-form-item>
 
@@ -175,7 +175,7 @@ export default {
                 console.log(valid);
                 if (valid) {
                     console.log(this.$refs[formName]);
-                    // this.createItem();
+                    this.createItem();
                 } else {
                     return false;
                 }
@@ -184,7 +184,39 @@ export default {
         },
         onItemCreationFormClose() {
             this.$emit('on-item-creation-dialog-closed', {closeItemCreationDialog: true});
-        }
+        },
+        createItem(){
+
+            this.loading = true;
+            this.debug_info = '';
+
+            this.$post('item', { ...this.form }).then(res => {
+                this.$notify.success({
+                    title: 'Great!',
+                    offset: 19,
+                    message: res.data.message
+                });
+                this.$emit('on-item-creation-dialog-closed', {closeFolderCreationDialog: true});
+            }).fail(res => {
+                if (Number(res.status) === 504) {
+                    return this.$notify.error({
+                        title: 'Oops!',
+                        offset: 19,
+                        message: '504 Gateway Time-out.'
+                    });
+                } else if(Number(res.status) === 422){
+                    const responseJSON = res.responseJSON;
+                    
+                    return this.$notify.error({
+                        title: 'Oops!',
+                        offset: 19,
+                        message: res.data.message
+                    });
+                }
+            }).always(() => {
+                this.loading = false;
+            });
+        },
     }
 }
 </script>

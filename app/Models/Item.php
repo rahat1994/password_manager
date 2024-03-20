@@ -5,7 +5,7 @@ namespace FluentMail\App\Models;
 use Exception;
 use FluentMail\Includes\Support\Arr;
 
-class Folder extends Model
+class Item extends Model
 {
     private $table = null;
     protected $fillables = [

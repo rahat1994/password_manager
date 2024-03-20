@@ -8,7 +8,7 @@
         <el-dialog
                 title="Create"
                 :visible.sync="isGeneralDialogVisible"
-                width="30%"
+                width="50%"
                 :close-on-click-modal="false"
             >
             <span>

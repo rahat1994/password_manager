@@ -152,7 +152,7 @@ class FolderController extends Controller
         }
 
         return $this->sendSuccess([
-            'message' => __('New folder createed successfully ', 'fluent-smtp')
+            'message' => __('New folder created successfully ', 'fluent-smtp')
         ]);
     }
 }
