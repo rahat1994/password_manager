@@ -36,11 +36,29 @@ class Item extends Model
         $db = $this->getDb();
 
         $query = $db->table($this->table)
-            ->orderBy('id', 'DESC');
+            // ->innerJoin(
+            //     FLUENT_MAIL_DB_PREFIX . 'folders',
+            //     $this->table . '.folder_id',
+            //     '=',
+            //     FLUENT_MAIL_DB_PREFIX . 'folders.id'
+            // )
+            // ->innerJoin(
+            //     FLUENT_MAIL_DB_PREFIX . 'organizations',
+            //     $this->table . '.organization_id',
+            //     '=',
+            //     FLUENT_MAIL_DB_PREFIX . 'organizations.id'
+            // )
+            // ->select(
+            //     FLUENT_MAIL_DB_PREFIX . 'items.*',
+            //     FLUENT_MAIL_DB_PREFIX . 'folders.name as folder_name',
+            //     FLUENT_MAIL_DB_PREFIX . 'organizations.name as organization_name'
+            // )
+            ->orderBy(FLUENT_MAIL_DB_PREFIX . 'items.id', 'DESC');
+        // Add this line to specify the main table for the query
 
-        if (isset($data['user_id'])) {
-            $query->where('user_id', '=', $data['user_id']);
-        }
+        // if (isset($data['user_id'])) {
+        //     $query->where('user_id', '=', $data['user_id']);
+        // }
 
         $result = $query->get();
         $result = $this->formatResult($result);
@@ -57,6 +75,18 @@ class Item extends Model
             $result = json_decode(json_encode($result), true);
         }
         $temp = [];
+
+        // {
+        //     id: i,
+        //     name: `Rahat Holland ${i}`,
+        //     username: "myusername",
+        //     password: "mypassword",
+        //     organisation:{
+        //         name: "Staff Asia",
+        //         id: 1
+        //     }
+
+        // }
         foreach ($result as $key => $row) {
             $temp[$key] = [
                 'id' => $row->id,
@@ -72,10 +102,27 @@ class Item extends Model
                 'organization_id' => $row->organization_id,
                 'folder_id' => $row->folder_id,
                 'collection_id' => $row->collection_id,
-                'user_id' => $row->user_id,
                 'login_url' => $row->login_url
             ];
         }
+
+        // foreach ($result as $key => $row) {
+        //     $temp[$key] = [
+        //         'id' => $row->id,
+        //         'name' => $row->name,
+        //         'username' => $row->username,
+        //         'password' => $row->password,
+        //         'organisation' => [
+        //             'name' => "Staff Asia",
+        //             'id' => $row->organization_id
+        //         ],
+        //         'master_pass_secured' => $row->master_pass_secured,
+        //         'folder' => [
+        //             'name' => "Staff Asia",
+        //             'id' => $row->folder_id
+        //         ],
+        //     ];
+        // }
 
         return $temp;
     }

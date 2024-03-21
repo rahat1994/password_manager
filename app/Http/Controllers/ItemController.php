@@ -11,11 +11,11 @@ use FluentSmtpLib\Google\Auth\Cache\Item as CacheItem;
 class ItemController extends Controller
 {
 
-    public function index(Request $request, Folder $folder)
+    public function index(Request $request, Item $item)
     {
         $this->verify();
         return $this->send(
-            $folder->get([
+            $item->get([
                 'user_id' => get_current_user_id()
             ])
         );

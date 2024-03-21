@@ -215,7 +215,8 @@
                 currentPage: 1,
                 perPage: 8,
                 total: 0,    
-                loading:false,
+                loadingFolders:false,
+                loadingItems:false,
                 vaults: [
                     {
                         name: "Vault 1",
@@ -282,14 +283,41 @@
             },
             fetchFolders(){
                 const data = {};
+                this.loadingFolders = true;
                 this.$get('folder', data).then(res => {
                     this.folders = res.data;
                 }).fail(error => {
                     console.log(error);
                 }).always(() => {
-                    this.loading = false;
+                    this.loadingFolders = false;
                 });
-            }
+            },
+            fetchItems(){
+                const data = {};
+                this.loadingItems = true;
+                this.$get('item', data).then(res => {
+
+                    this.vaultItems = [];
+                    res.data.forEach((item) => {
+                        this.vaultItems.push({
+                            id: item.id,
+                            name: item.name,
+                            username: item.username,
+                            password: "mypassword",
+                            organisation: {
+                                name: "Staff Asia",
+                                id: 1
+                            }
+
+                        });
+                    });
+                    // this.vaultItems = res.data;
+                }).fail(error => {
+                    console.log(error);
+                }).always(() => {
+                    this.loadingItems = false;
+                });
+            },
         },
         computed: {
             displayVaultItems() {
@@ -353,6 +381,8 @@
 
             }
             this.fetchFolders();
+            this.fetchItems();
+            
         }
     };
 </script>

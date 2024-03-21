@@ -14,31 +14,27 @@
             <span>
                 <el-row>
                     <el-col :sm="12" :lg="8">
-                        <el-result icon="info" title="Success Tip" subTitle="Please follow the instructions">
+                        <el-result icon="info" title="Create a new Item" subTitle="Create an Item">
                         <template slot="extra">
                             <el-button @click="isItemCreationDialogVisible = true" type="primary" icon="el-icon-plus">Item</el-button>
                         </template>
                         </el-result>
                     </el-col>
                     <el-col :sm="12" :lg="8">
-                        <el-result icon="info" title="Warning Tip" subTitle="Please follow the instructions">
+                        <el-result icon="info" title="Create Folder " subTitle="Create a new folder.">
                         <template slot="extra">
-                            <el-button @click="isFolderCreationDialogVisible = true" type="primary" icon="el-icon-plus">Folder</el-button>
+                            <el-button @click="isFolderCreationDialogVisible = true" type="primary" icon="el-icon-plus.">Folder</el-button>
                         </template>
                         </el-result>
                     </el-col>
                     <el-col :sm="12" :lg="8">
-                        <el-result icon="info" title="Error Tip" subTitle="Please follow the instructions">
+                        <el-result icon="info" title="Create Collection" subTitle="Create a new collection.">
                         <template slot="extra">
                             <el-button type="primary" icon="el-icon-plus">Collection</el-button>
                         </template>
                         </el-result>
                     </el-col>
                 </el-row>
-            </span>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="isGeneralDialogVisible = false">Cancel</el-button>
-                <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
             </span>
         </el-dialog>
 

@@ -1,15 +1,9 @@
 <template>
-    <el-dialog 
-        :title="$t('Create New Item')" 
-        :visible.sync="isItemCreationDialogVisible"
-        :close-on-click-modal="false"
-        >
+    <el-dialog :title="$t('Create New Item')" :visible.sync="isItemCreationDialogVisible"
+        :before-close="onItemCreationFormClose" :close-on-click-modal="false">
         <span>
-            <el-form 
-                ref="itemCreationForm" 
-                size="mini" 
-                :rules="itemCreationFormRules" 
-                :model="form" label-width="11rem" style="padding:2rem">
+            <el-form ref="itemCreationForm" size="mini" :rules="itemCreationFormRules" :model="form" label-width="11rem"
+                style="padding:2rem">
 
                 <el-form-item :label="$t('Item Type')" prop="item_type">
                     <el-col :span="24">
@@ -27,32 +21,28 @@
                     <el-col :span="12">
                         <el-form-item prop="name">
                             <el-input :placeholder="$t('Name')" v-model="form.name" style="width: 100%;"></el-input>
-                        </el-form-item>                        
+                        </el-form-item>
                     </el-col>
 
-                    <el-col :span="12" >
+                    <el-col :span="12">
                         <el-form-item prop="folder">
                             <el-select v-model="form.folder" :placeholder="$t('Folder')">
-                                <el-option v-for="folder in folders" :key="folder.id" :label="folder.name" :value="folder.id"></el-option> 
+                                <el-option v-for="folder in folders" :key="folder.id" :label="folder.name"
+                                    :value="folder.id"></el-option>
                             </el-select>
                         </el-form-item>
 
                     </el-col>
-                </el-form-item> 
-                
+                </el-form-item>
+
                 <el-form-item :label="$t('Username & password')" required>
                     <el-col :span="12">
 
                         <el-form-item prop="username">
-                            <el-input
-                                clearable
-                                size="small"
-                                v-model="form.username"
-                                @clear="form.username=''"
-                                @keyup.enter.native="fetch"
-                                :placeholder="$t('Username')"
-                            >
-                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
+                            <el-input clearable size="small" v-model="form.username" @clear="form.username=''"
+                                @keyup.enter.native="fetch" :placeholder="$t('Username')">
+                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy"
+                                    @click="()=>{}" />
                             </el-input>
                         </el-form-item>
 
@@ -61,14 +51,10 @@
                     <el-col :span="12">
 
                         <el-form-item prop="password">
-                            <el-input
-                                clearable
-                                size="small"
-                                v-model="form.password"
-                                show-password
-                                :placeholder="$t('password')"
-                            >
-                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy" @click="()=>{}"/>
+                            <el-input clearable size="small" v-model="form.password" show-password
+                                :placeholder="$t('password')">
+                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy"
+                                    @click="()=>{}" />
                             </el-input>
                         </el-form-item>
 
@@ -79,14 +65,9 @@
                 <el-form-item :label="$t('URL')" prop="url">
                     <el-col :span="24">
 
-                        <el-input
-                            clearable
-                            size="small"
-                            v-model="form.url"
-                            @clear="form.url=''"
-                            :placeholder="$t('URL')"
-                        >
-                            <el-button style="width: 3rem;" slot="append" icon="el-icon-top-right" @click="()=>{}"/>
+                        <el-input clearable size="small" v-model="form.url" @clear="form.url=''"
+                            :placeholder="$t('URL')">
+                            <el-button style="width: 3rem;" slot="append" icon="el-icon-top-right" @click="()=>{}" />
                         </el-input>
                     </el-col>
                 </el-form-item>
@@ -95,7 +76,7 @@
                     <el-col>
                         <el-input type="textarea" v-model="form.desc"></el-input>
                     </el-col>
-                    
+
                 </el-form-item>
 
                 <el-divider></el-divider>
