@@ -22,6 +22,6 @@ export default [
         meta: {
             title: 'Tools',
         },
-        component: Test,
+        component: Logs,
     }
 ];

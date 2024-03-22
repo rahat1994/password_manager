@@ -1,7 +1,7 @@
 <template>
     <div class="content" style="background-color: #f5f7fa;">
         <el-row class="tac" :gutter="20">
-            <el-col :span="6">
+            <el-col :span="5">
                 <el-menu
                 default-active="2"
                 class="el-menu-vertical-demo menu"
@@ -54,10 +54,10 @@
                             size="small"
                             v-model="filter.searchTerm"
                             @clear="filter.searchTerm=''"
-                            @keyup.enter.native="fetch"
+                            @keyup.enter.native="fetchItems"
                             :placeholder="$t('Type & press enter...')"
                         >
-                            <el-button slot="append" icon="el-icon-search" @click="fetch"/>
+                            <el-button slot="append" icon="el-icon-search" @click="fetchItems"/>
                         </el-input>
                     </div> 
 
@@ -68,7 +68,8 @@
                 </div>
 
                 <el-table
-                        :data="displayVaultItems"
+                        stripe
+                        :data="vaultItems"
                         style="width: 100%"
                         @selection-change="handleSelectionChange"
                     >
@@ -235,8 +236,17 @@
                 });
             },
             fetchItems(){
-                const data = {};
+
                 this.loadingItems = true;
+
+                const data = {
+                    per_page: this.pagination.per_page,
+                    page: this.pagination.current_page,
+                    search: this.filter.search
+                };
+
+                this.$router.replace({ query: data });
+
                 this.$get('item', data).then(res => {
 
                     this.vaultItems = [];
@@ -287,9 +297,7 @@
             }
         },
         created() {
-            for (let i = 1; i <= 60; i++) {
-
-                if(i == 10){
+            for (let i = 1; i <= 60; i++) {                
                     this.vaultItems.push({
                         id: i,
                         name: `Rahat Holland ${i}`,
@@ -301,34 +309,6 @@
                         }
 
                     });
-                }
-                else if(i == 20){
-                    this.vaultItems.push({
-                        id: i,
-                        name: `Hoyt Holland ${i}`,
-                        username: "rahatname",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-
-                    });
-                } else{
-                    this.vaultItems.push({
-                        id: i,
-                        name: `Hoyt Holland ${i}`,
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-
-                    });
-                }
-
-
             }
             this.fetchFolders();
             this.fetchItems();
