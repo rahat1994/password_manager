@@ -25,6 +25,11 @@ class Item extends Model
         'login_url'
     ];
 
+    protected $searchables = [
+        'name',
+        'username',
+    ];
+
     public function __construct()
     {
         parent::__construct();
@@ -34,6 +39,9 @@ class Item extends Model
     public function get($data)
     {
         $db = $this->getDb();
+        $page    = isset($data['page']) ? (int)$data['page'] : 1;
+        $perPage = isset($data['per_page']) ? (int)$data['per_page'] : 15;
+        $offset  = ($page - 1) * $perPage;
 
         $query = $db->table($this->table)
             // ->innerJoin(
@@ -53,17 +61,45 @@ class Item extends Model
             //     FLUENT_MAIL_DB_PREFIX . 'folders.name as folder_name',
             //     FLUENT_MAIL_DB_PREFIX . 'organizations.name as organization_name'
             // )
+            ->limit($perPage)
+            ->offset($offset)
             ->orderBy(FLUENT_MAIL_DB_PREFIX . 'items.id', 'DESC');
-        // Add this line to specify the main table for the query
+            
+            if (!empty($data['status'])) {
+                $query->where('status', sanitize_text_field($data['status']));
+            }
 
-        // if (isset($data['user_id'])) {
-        //     $query->where('user_id', '=', $data['user_id']);
-        // }
+            if (!empty($data['search'])) {
+                $search = trim(sanitize_text_field($data['search']));
+                $query->where(function ($q) use ($search) {
+                    $searchColumns = $this->searchables;
+    
+                    $columnSearch = false;
+                    if (strpos($search, ':')) {
+                        $searchArray = explode(':', $search);
+                        $column = array_shift($searchArray);
+                        if (in_array($column, $this->fillables)) {
+                            $columnSearch = true;
+                            $q->where($column, 'LIKE', '%' . trim(implode(':', $searchArray)) . '%');
+                        }
+                    }
+    
+                    if (!$columnSearch) {
+                        $firstColumn = array_shift($searchColumns);
+                        $q->where($firstColumn, 'LIKE', '%' . $search . '%');
+                        foreach ($searchColumns as $column) {
+                            $q->orWhere($column, 'LIKE', '%' . $search . '%');
+                        }
+                    }
+                });
+            }
+            if (isset($data['user_id'])) {
+                $query->where('user_id', '=', $data['user_id']);
+            }
+            $result = $query->paginate();
+            $result['data'] = $this->formatResult($result['data']);
 
-        $result = $query->get();
-        $result = $this->formatResult($result);
-
-        return ['data' => $result];
+        return $result;
     }
 
     protected function formatResult($result)

@@ -122,10 +122,10 @@
                     <el-pagination
                         background
                         @current-change="changeCurrentPage"
-                        @currentPage="currentPage"
-                        :page-size="perPage"
+                        @currentPage="pagination.currentPage"
+                        :page-size="pagination.perPage"
                         layout="total, prev, pager, next, jumper"
-                        :total="total"
+                        :total="pagination.total"
                     >
                     </el-pagination>
                 </div>
@@ -134,6 +134,208 @@
         </el-row>
     </div>
 </template>
+<script type="text/babel">
+    import VaultBulkActions from "./VaultBulkActions.vue";
+    import VaultHeaderButton from "./VaultHeaderButton.vue";
+    export default {
+        name: 'Vault',
+        components: {
+            VaultBulkActions,
+            VaultHeaderButton
+        },
+        data() {
+            return {
+                contentHeaderTitle: "All Vault",
+                filter: {
+                    searchTerm: '',
+                    folder:null,
+                    collections:null,
+                },
+                page: 1,
+                loadingFolders:false,
+                loadingItems:false,
+                pagination: {
+                    total: 0,
+                    perPage: 10,
+                    currentPage: 1
+                },
+                vaults: [
+                    {
+                        name: "Vault 1",
+                        id: 1
+                    },
+                    {
+                        name: "Vault 2",
+                        id: 2
+                    },
+                    {
+                        name: "Vault 3",
+                        id: 3
+                    }
+                ],
+                filtered: [],
+                searchBy: ["name", "username"],
+                vaultItems: [],
+                selectedVaultItems: [],
+                folders: [],
+                collections: [],
+                currentItem: {},
+            }
+        },
+        methods: {
+            handleItemDropDownCommand(command){
+                console.log(this.currentItem);
+                console.log(command);
+            },
+            copyUserName() {
+                console.log("Copy Username");
+            },
+            copyPassword() {
+                console.log("Copy Password");
+            },
+            handleOpen(key, keyPath) {
+                this.message = "Hello there";
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleEdit(index, row) {
+                console.log(index, row);
+            },
+            handleDelete(index, row) {
+                this.currentItem = row;
+                console.log(index, row);
+            },
+            setActive() {
+                this.active = this.$route.meta.parent || this.$route.name;
+            },
+            changeCurrentPage(val) {
+                this.pagination.currentPage = val
+            },
+            changePerPage(val) {
+                this.pagination.perPage = val
+            },
+            handleSelectionChange(val) {
+                console.log(val);
+                this.selectedVaultItems = val;
+            },
+            handleVaultBulkAction(action) {
+                console.log(action);
+            },
+            fetchFolders(){
+                const data = {};
+                this.loadingFolders = true;
+                this.$get('folder', data).then(res => {
+                    this.folders = res.data;
+                }).fail(error => {
+                    console.log(error);
+                }).always(() => {
+                    this.loadingFolders = false;
+                });
+            },
+            fetchItems(){
+                const data = {};
+                this.loadingItems = true;
+                this.$get('item', data).then(res => {
+
+                    this.vaultItems = [];
+                    this.pagination.total = res.total;
+                    const page = Number(this.$route.query.page);
+                    this.pagination.current_page = page || this.pagination.current_page;
+
+                    this.vaultItems = this.formatItems(res.data);
+ 
+                    
+                }).fail(error => {
+                    console.log(error);
+                }).always(() => {
+                    this.loadingItems = false;
+                });
+            },
+            formatItems(items){
+                jQuery.each(items, (i, item) => {
+                    items[i] = {
+                            id: item.id,
+                            name: item.name,
+                            username: item.username,
+                            password: "mypassword",
+                            organisation: {
+                                name: "Staff Asia",
+                                id: 1
+                            }
+                        };
+                });
+                return items;
+            },
+        },
+        computed: {
+            displayVaultItems() {
+
+                if (this.filter.searchTerm == ""){
+                    this.pagination.total = this.vaultItems.length
+                    return this.vaultItems.slice(this.pagination.perPage * this.pagination.currentPage - this.pagination.perPage, this.pagination.perPage * this.pagination.currentPage)
+                } 
+                this.filtered = this.vaultItems.filter(
+                    (data) =>
+                    !this.filter.searchTerm ||
+                    this.searchBy.some((item) => data[item].toString().toLowerCase().includes(this.filter.searchTerm.toLowerCase()))
+                )
+
+                this.pagination.total = this.filtered.length
+                return this.filtered.slice(this.pagination.perPage * this.pagination.currentPage - this.pagination.perPage, this.pagination.perPage * this.pagination.currentPage)
+            }
+        },
+        created() {
+            for (let i = 1; i <= 60; i++) {
+
+                if(i == 10){
+                    this.vaultItems.push({
+                        id: i,
+                        name: `Rahat Holland ${i}`,
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+
+                    });
+                }
+                else if(i == 20){
+                    this.vaultItems.push({
+                        id: i,
+                        name: `Hoyt Holland ${i}`,
+                        username: "rahatname",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+
+                    });
+                } else{
+                    this.vaultItems.push({
+                        id: i,
+                        name: `Hoyt Holland ${i}`,
+                        username: "myusername",
+                        password: "mypassword",
+                        organisation:{
+                            name: "Staff Asia",
+                            id: 1
+                        }
+
+                    });
+                }
+
+
+            }
+            this.fetchFolders();
+            this.fetchItems();
+            
+        }
+    };
+</script>
 <style>
 
     .sidebar_search_input_wrapper{
@@ -194,195 +396,3 @@
     color: red;
 }
 </style>
-<script type="text/babel">
-    import VaultBulkActions from "./VaultBulkActions.vue";
-    import VaultHeaderButton from "./VaultHeaderButton.vue";
-    export default {
-        name: 'Vault',
-        components: {
-            VaultBulkActions,
-            VaultHeaderButton
-        },
-        data() {
-            return {
-                contentHeaderTitle: "All Vault",
-                filter: {
-                    searchTerm: '',
-                    folder:null,
-                    collections:null,
-                },
-                page: 1,
-                currentPage: 1,
-                perPage: 8,
-                total: 0,    
-                loadingFolders:false,
-                loadingItems:false,
-                vaults: [
-                    {
-                        name: "Vault 1",
-                        id: 1
-                    },
-                    {
-                        name: "Vault 2",
-                        id: 2
-                    },
-                    {
-                        name: "Vault 3",
-                        id: 3
-                    }
-                ],
-                filtered: [],
-                searchBy: ["name", "username"],
-                vaultItems: [],
-                selectedVaultItems: [],
-                folders: [],
-                collections: [],
-                currentItem: {},
-            }
-        },
-        methods: {
-            handleItemDropDownCommand(command){
-                console.log(this.currentItem);
-                console.log(command);
-            },
-            copyUserName() {
-                console.log("Copy Username");
-            },
-            copyPassword() {
-                console.log("Copy Password");
-            },
-            handleOpen(key, keyPath) {
-                this.message = "Hello there";
-                console.log(key, keyPath);
-            },
-            handleClose(key, keyPath) {
-                console.log(key, keyPath);
-            },
-            handleEdit(index, row) {
-                console.log(index, row);
-            },
-            handleDelete(index, row) {
-                this.currentItem = row;
-                console.log(index, row);
-            },
-            setActive() {
-                this.active = this.$route.meta.parent || this.$route.name;
-            },
-            changeCurrentPage(val) {
-                this.currentPage = val
-            },
-            changePerPage(val) {
-                this.perPage = val
-            },
-            handleSelectionChange(val) {
-                console.log(val);
-                this.selectedVaultItems = val;
-            },
-            handleVaultBulkAction(action) {
-                console.log(action);
-            },
-            fetchFolders(){
-                const data = {};
-                this.loadingFolders = true;
-                this.$get('folder', data).then(res => {
-                    this.folders = res.data;
-                }).fail(error => {
-                    console.log(error);
-                }).always(() => {
-                    this.loadingFolders = false;
-                });
-            },
-            fetchItems(){
-                const data = {};
-                this.loadingItems = true;
-                this.$get('item', data).then(res => {
-
-                    this.vaultItems = [];
-                    res.data.forEach((item) => {
-                        this.vaultItems.push({
-                            id: item.id,
-                            name: item.name,
-                            username: item.username,
-                            password: "mypassword",
-                            organisation: {
-                                name: "Staff Asia",
-                                id: 1
-                            }
-
-                        });
-                    });
-                    // this.vaultItems = res.data;
-                }).fail(error => {
-                    console.log(error);
-                }).always(() => {
-                    this.loadingItems = false;
-                });
-            },
-        },
-        computed: {
-            displayVaultItems() {
-
-                if (this.filter.searchTerm == ""){
-                    this.total = this.vaultItems.length
-                    return this.vaultItems.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
-                } 
-                this.filtered = this.vaultItems.filter(
-                    (data) =>
-                    !this.filter.searchTerm ||
-                    this.searchBy.some((item) => data[item].toString().toLowerCase().includes(this.filter.searchTerm.toLowerCase()))
-                )
-
-                this.total = this.filtered.length
-                return this.filtered.slice(this.perPage * this.currentPage - this.perPage, this.perPage * this.currentPage)
-            }
-        },
-        created() {
-            for (let i = 1; i <= 60; i++) {
-
-                if(i == 10){
-                    this.vaultItems.push({
-                        id: i,
-                        name: `Rahat Holland ${i}`,
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-
-                    });
-                }
-                else if(i == 20){
-                    this.vaultItems.push({
-                        id: i,
-                        name: `Hoyt Holland ${i}`,
-                        username: "rahatname",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-
-                    });
-                } else{
-                    this.vaultItems.push({
-                        id: i,
-                        name: `Hoyt Holland ${i}`,
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-
-                    });
-                }
-
-
-            }
-            this.fetchFolders();
-            this.fetchItems();
-            
-        }
-    };
-</script>
