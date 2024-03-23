@@ -15,9 +15,12 @@ class ItemController extends Controller
     {
         $this->verify();
         return $this->send(
-            $item->get([
-                'user_id' => get_current_user_id()
-            ])
+            $item->get(
+                array_merge(
+                    $request->except(['nonce', 'action']),
+                    ['user_id' => get_current_user_id()]
+                )
+            )
         );
     }
 

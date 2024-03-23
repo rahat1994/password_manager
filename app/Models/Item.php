@@ -64,40 +64,43 @@ class Item extends Model
             ->limit($perPage)
             ->offset($offset)
             ->orderBy(FLUENT_MAIL_DB_PREFIX . 'items.id', 'DESC');
-            
-            if (!empty($data['status'])) {
-                $query->where('status', sanitize_text_field($data['status']));
-            }
 
-            if (!empty($data['search'])) {
-                $search = trim(sanitize_text_field($data['search']));
-                $query->where(function ($q) use ($search) {
-                    $searchColumns = $this->searchables;
-    
-                    $columnSearch = false;
-                    if (strpos($search, ':')) {
-                        $searchArray = explode(':', $search);
-                        $column = array_shift($searchArray);
-                        if (in_array($column, $this->fillables)) {
-                            $columnSearch = true;
-                            $q->where($column, 'LIKE', '%' . trim(implode(':', $searchArray)) . '%');
-                        }
+        if (!empty($data['status'])) {
+            $query->where('status', sanitize_text_field($data['status']));
+        }
+
+        if (!empty($data['search'])) {
+            $search = trim(sanitize_text_field($data['search']));
+            $query->where(function ($q) use ($search) {
+                $searchColumns = $this->searchables;
+
+                $columnSearch = false;
+                if (strpos($search, ':')) {
+                    $searchArray = explode(':', $search);
+                    $column = array_shift($searchArray);
+                    if (in_array($column, $this->fillables)) {
+                        $columnSearch = true;
+                        $q->where($column, 'LIKE', '%' . trim(implode(':', $searchArray)) . '%');
                     }
-    
-                    if (!$columnSearch) {
-                        $firstColumn = array_shift($searchColumns);
-                        $q->where($firstColumn, 'LIKE', '%' . $search . '%');
-                        foreach ($searchColumns as $column) {
-                            $q->orWhere($column, 'LIKE', '%' . $search . '%');
-                        }
+                }
+
+                if (!$columnSearch) {
+                    $firstColumn = array_shift($searchColumns);
+                    $q->where($firstColumn, 'LIKE', '%' . $search . '%');
+                    foreach ($searchColumns as $column) {
+                        $q->orWhere($column, 'LIKE', '%' . $search . '%');
                     }
-                });
-            }
-            if (isset($data['user_id'])) {
-                $query->where('user_id', '=', $data['user_id']);
-            }
-            $result = $query->paginate();
-            $result['data'] = $this->formatResult($result['data']);
+                }
+            });
+        }
+        if (isset($data['user_id'])) {
+            $query->where('user_id', '=', $data['user_id']);
+        }
+
+        // echo "<pre>";
+        // print_r($data);
+        $result = $query->paginate();
+        $result['data'] = $this->formatResult($result['data']);
 
         return $result;
     }

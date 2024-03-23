@@ -17,14 +17,14 @@
                     <span>{{ $t('All Vaults') }}</span>
                     </template>
                     <el-menu-item-group>
-                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="1-vault.id">{{ vault.name }}</el-menu-item>
+                        <!-- <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="vault.id">{{ vault.name }}</el-menu-item> -->
                     </el-menu-item-group>
                     <el-menu-item-group title="Group Two">
-                    <el-menu-item index="1-3">item three</el-menu-item>
+                    <!-- <el-menu-item index="1-3">item three</el-menu-item> -->
                     </el-menu-item-group>
                     <el-submenu index="1-4">
                     <template slot="title">item four</template>
-                    <el-menu-item index="1-4-1">item one</el-menu-item>
+                    <!-- <el-menu-item index="1-4-1">item one</el-menu-item> -->
                     </el-submenu>
                 </el-submenu>
                 <el-menu-item index="2">
@@ -181,6 +181,7 @@
                 folders: [],
                 collections: [],
                 currentItem: {},
+                itemData:{}
             }
         },
         methods: {
@@ -239,15 +240,15 @@
 
                 this.loadingItems = true;
 
-                const data = {
-                    per_page: this.pagination.per_page,
-                    page: this.pagination.current_page,
-                    search: this.filter.search
+                this.itemData = {
+                    per_page: this.pagination.perPage,
+                    page: this.pagination.currentPage,
+                    search: this.filter.searchTerm
                 };
+                console.log(this.itemData);
+                this.$router.replace({ query: this.itemData });
 
-                this.$router.replace({ query: data });
-
-                this.$get('item', data).then(res => {
+                this.$get('item', this.itemData).then(res => {
 
                     this.vaultItems = [];
                     this.pagination.total = res.total;
@@ -310,6 +311,34 @@
 
                     });
             }
+
+            const currentPage = this.$route.query.page;
+
+            if (currentPage) {
+                this.pagination.current_page = Number(currentPage);
+            }
+
+            if (this.$route.query.status) {
+                this.filter.status = this.$route.query.status;
+            }
+
+            if (this.$route.query.search) {
+                this.filter.searchTerm = this.$route.query.search;
+            }
+
+            this.form = this.appVars.settings.misc;
+
+            this.logAlertInfo = window.localStorage.getItem('log-settings');
+
+            if (!this.logAlertInfo) {
+                window.localStorage.setItem('log-settings', JSON.stringify({
+                    show_status_info: true,
+                    show_status_warning: true
+                }));
+            }
+
+            this.logAlertInfo = JSON.parse(window.localStorage.getItem('log-settings'));
+
             this.fetchFolders();
             this.fetchItems();
             

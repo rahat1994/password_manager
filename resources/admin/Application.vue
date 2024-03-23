@@ -1,21 +1,11 @@
 <template>
     <div class="fluent-mail-app">
         <div class="fluent-mail-main-menu-items">
-            <el-menu
-                :router="true"
-                mode="horizontal"
-                class="fluent-mail-navigation"
-                :default-active="active"
-            >
-                <el-menu-item index="dashboard" :route="{ name: 'dashboard' }" v-html="logo" />
+            <el-menu :router="true" mode="horizontal" class="fluent-mail-navigation" :default-active="active">
+                <el-menu-item index="vault" :route="{ name: 'vault' }" v-html="logo" />
 
-                <el-menu-item
-                    :key="item.route"
-                    :index="item.route"
-                    v-html="item.title"
-                    v-for="item in items"
-                    :route="{ name: item.route }"
-                />
+                <el-menu-item :key="item.route" :index="item.route" v-html="item.title" v-for="item in items"
+                    :route="{ name: item.route }" />
             </el-menu>
         </div>
 
