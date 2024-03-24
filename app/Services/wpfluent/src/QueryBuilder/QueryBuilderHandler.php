@@ -146,7 +146,6 @@ class QueryBuilderHandler
     public function statement($rawSql)
     {
         $start = microtime(true);
-        print_r($rawSql);
         $this->db->query($rawSql);
 
         return microtime(true) - $start;
