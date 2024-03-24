@@ -217,7 +217,7 @@ class ItemController extends Controller
             ]);
         }
 
-        print_r($encryptionData);
+        // print_r($encryptionData);
         $data = [
             'name' => $name,
             'username' => $username,
