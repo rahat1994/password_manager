@@ -2,6 +2,7 @@
 
 namespace FluentMail\App\Http\Controllers;
 
+use Exception;
 use FluentMail\App\Models\Folder;
 use FluentMail\App\Models\Logger;
 use FluentMail\App\Models\Item;
@@ -206,11 +207,22 @@ class ItemController extends Controller
             ]);
         }
         $encryptionData = $this->encryptPass($password);
+
+        // echo '<pre>';
+        // print_r($encryptionData);
+        // exit;
+        if (is_wp_error($encryptionData)) {
+            return $this->sendError([
+                'message' => $encryptionData->get_error_message()
+            ]);
+        }
+
+        print_r($encryptionData);
         $data = [
             'name' => $name,
             'username' => $username,
             'password' => $encryptionData['password'],
-            'key' => $encryptionData['key'],
+            'key' => base64_encode($encryptionData['key']),
             'login_url' => $url,
             'note' => $desc,
             'folder_id' => $folderId,
@@ -220,11 +232,25 @@ class ItemController extends Controller
             'user_id' => get_current_user_id()
         ];
 
+
         $result = $item->add($data);
 
-        if (is_wp_error($result)) {
+        if (is_wp_error($result) || $result == 0) {
+
+            if ($result == 0) {
+                return $this->sendError([
+                    'message' => __('Something went wrong.', 'fluent-smtp')
+                ]);
+            }
+
             return $this->sendError([
                 'message' => $result->get_error_message()
+            ]);
+        }
+
+        if ($result instanceof Exception) {
+            return $this->sendError([
+                'message' => $result->getMessage()
             ]);
         }
 
@@ -237,6 +263,7 @@ class ItemController extends Controller
     {
         $key = EncryptAuthenticationWrapper::generateKey();
         $encryptedPassword = EncryptAuthenticationWrapper::encrypt($password, $key);
+
         return [
             'key' => $key,
             'password' => $encryptedPassword

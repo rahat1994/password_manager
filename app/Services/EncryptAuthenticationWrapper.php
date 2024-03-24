@@ -19,19 +19,21 @@ class EncryptAuthenticationWrapper extends Encrypt
      */
     public static function encrypt($message, $key, $encode = false)
     {
-        list($encKey, $authKey) = self::splitKeys($key);
+        $nonce = random_bytes(
+            SODIUM_CRYPTO_SECRETBOX_NONCEBYTES
+        );
 
-        // Pass to UnsafeCrypto::encrypt
-        $ciphertext = parent::encrypt($message, $encKey);
-
-        // Calculate a MAC of the IV and ciphertext
-        $mac = hash_hmac(self::HASH_ALGO, $ciphertext, $authKey, true);
-
-        if ($encode) {
-            return base64_encode($mac . $ciphertext);
-        }
-        // Prepend MAC to the ciphertext and return to caller
-        return $mac . $ciphertext;
+        $cipher = base64_encode(
+            $nonce .
+                sodium_crypto_secretbox(
+                    $message,
+                    $nonce,
+                    $key
+                )
+        );
+        // sodium_memzero($message);
+        // sodium_memzero($key);
+        return $cipher;
     }
 
     /**
@@ -44,35 +46,27 @@ class EncryptAuthenticationWrapper extends Encrypt
      */
     public static function decrypt($message, $key, $encoded = false)
     {
-        list($encKey, $authKey) = self::splitKeys($key);
-        if ($encoded) {
-            $message = base64_decode($message, true);
-            if ($message === false) {
-                throw new Exception('Encryption failure');
-            }
+        $decoded = base64_decode($encrypted);
+        if ($decoded === false) {
+            throw new Exception('Scream bloody murder, the encoding failed');
         }
+        if (mb_strlen($decoded, '8bit') < (SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES)) {
+            throw new Exception('Scream bloody murder, the message was truncated');
+        }
+        $nonce = mb_substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit');
+        $ciphertext = mb_substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit');
 
-        // Hash Size -- in case HASH_ALGO is changed
-        $hs = mb_strlen(hash(self::HASH_ALGO, '', true), '8bit');
-        $mac = mb_substr($message, 0, $hs, '8bit');
-
-        $ciphertext = mb_substr($message, $hs, null, '8bit');
-
-        $calculated = hash_hmac(
-            self::HASH_ALGO,
+        $plain = sodium_crypto_secretbox_open(
             $ciphertext,
-            $authKey,
-            true
+            $nonce,
+            $key
         );
-
-        if (!self::hashEquals($mac, $calculated)) {
-            throw new Exception('Encryption failure');
+        if ($plain === false) {
+            throw new Exception('the message was tampered with in transit');
         }
-
-        // Pass to UnsafeCrypto::decrypt
-        $plaintext = parent::decrypt($ciphertext, $encKey);
-
-        return $plaintext;
+        sodium_memzero($ciphertext);
+        sodium_memzero($key);
+        return $plain;
     }
 
     /**

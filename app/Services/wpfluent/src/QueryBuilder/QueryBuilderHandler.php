@@ -1,4 +1,6 @@
-<?php namespace FluentSmtpDb\QueryBuilder;
+<?php
+
+namespace FluentSmtpDb\QueryBuilder;
 
 use FluentSmtpDb\Connection;
 use FluentSmtpDb\Exception;
@@ -56,7 +58,7 @@ class QueryBuilderHandler
     public function __construct(Connection $connection = null)
     {
         if (is_null($connection)) {
-            if (! $connection = Connection::getStoredConnection()) {
+            if (!$connection = Connection::getStoredConnection()) {
                 throw new Exception('No database connection found.', 1);
             }
         }
@@ -100,7 +102,8 @@ class QueryBuilderHandler
      */
     public function asObject($className, $constructorArgs = array())
     {
-        var_dump('need to implement this'); die();
+        var_dump('need to implement this');
+        die();
 
         return $this->setFetchMode(\PDO::FETCH_CLASS, $className, $constructorArgs);
     }
@@ -143,7 +146,7 @@ class QueryBuilderHandler
     public function statement($rawSql)
     {
         $start = microtime(true);
-
+        print_r($rawSql);
         $this->db->query($rawSql);
 
         return microtime(true) - $start;
@@ -159,7 +162,7 @@ class QueryBuilderHandler
     {
         $eventResult = $this->fireEvents('before-select');
 
-        if (! is_null($eventResult)) {
+        if (!is_null($eventResult)) {
             return $eventResult;
         };
 
@@ -277,12 +280,12 @@ class QueryBuilderHandler
     {
         $allowedTypes = array('select', 'insert', 'insertignore', 'replace', 'delete', 'update', 'criteriaonly');
 
-        if (! in_array(strtolower($type), $allowedTypes)) {
+        if (!in_array(strtolower($type), $allowedTypes)) {
             throw new Exception($type . ' is not a known type.', 2);
         }
 
         $queryArr = $this->adapterInstance->$type($this->statements, $dataToBePassed);
-        
+
         return  $this->container->build(
             '\\FluentSmtpDb\\QueryBuilder\\QueryObject',
             array($queryArr['sql'], $queryArr['bindings'])
@@ -316,13 +319,13 @@ class QueryBuilderHandler
     {
         $eventResult = $this->fireEvents('before-insert');
 
-        if (! is_null($eventResult)) {
+        if (!is_null($eventResult)) {
             return $eventResult;
         }
 
         // If first value is not an array
         // Its not a batch insert
-        if (! is_array(current($data))) {
+        if (!is_array(current($data))) {
             $start = microtime(true);
 
             $queryObject = $this->getQuery($type, $data);
@@ -389,7 +392,7 @@ class QueryBuilderHandler
     {
         $eventResult = $this->fireEvents('before-update');
 
-        if (! is_null($eventResult)) {
+        if (!is_null($eventResult)) {
             return $eventResult;
         }
 
@@ -434,7 +437,7 @@ class QueryBuilderHandler
     {
         $eventResult = $this->fireEvents('before-delete');
 
-        if (! is_null($eventResult)) {
+        if (!is_null($eventResult)) {
             return $eventResult;
         }
 
@@ -453,7 +456,7 @@ class QueryBuilderHandler
      */
     public function table($tables)
     {
-        if (! is_array($tables)) {
+        if (!is_array($tables)) {
             // because a single table is converted to an array anyways,
             // this makes sense.
             $tables = func_get_args();
@@ -473,7 +476,7 @@ class QueryBuilderHandler
      */
     public function from($tables)
     {
-        if (! is_array($tables)) {
+        if (!is_array($tables)) {
             $tables = func_get_args();
         }
 
@@ -490,7 +493,7 @@ class QueryBuilderHandler
      */
     public function select($fields)
     {
-        if (! is_array($fields)) {
+        if (!is_array($fields)) {
             $fields = func_get_args();
         }
 
@@ -534,7 +537,7 @@ class QueryBuilderHandler
      */
     public function orderBy($fields, $defaultDirection = 'ASC')
     {
-        if (! is_array($fields)) {
+        if (!is_array($fields)) {
             $fields = array($fields);
         }
 
@@ -803,7 +806,7 @@ class QueryBuilderHandler
      */
     public function join($table, $key, $operator = null, $value = null, $type = 'inner')
     {
-        if (! $key instanceof \Closure) {
+        if (!$key instanceof \Closure) {
             $key = function ($joinBuilder) use ($key, $operator, $value) {
                 $joinBuilder->on($key, $operator, $value);
             };
@@ -812,7 +815,7 @@ class QueryBuilderHandler
         // Build a new JoinBuilder class, keep it by reference so any changes made
         // in the closure should reflect here
         $joinBuilder = $this->container->build('\\FluentSmtpDb\\QueryBuilder\\JoinBuilder', array($this->connection));
-        $joinBuilder = & $joinBuilder;
+        $joinBuilder = &$joinBuilder;
         // Call the closure with our new joinBuilder object
         $key($joinBuilder);
         $table = $this->addTablePrefix($table, false);
@@ -977,7 +980,7 @@ class QueryBuilderHandler
         // If supplied value is not an array then make it one
         $single = false;
 
-        if (! is_array($values)) {
+        if (!is_array($values)) {
             $values = array($values);
             // We had single value, so should return a single value
             $single = true;
@@ -995,11 +998,11 @@ class QueryBuilderHandler
             // If key is not integer, it is likely a alias mapping,
             // so we need to change prefix target
             $target = &$value;
-            if (! is_int($key)) {
+            if (!is_int($key)) {
                 $target = &$key;
             }
 
-            if (! $tableFieldMix || ($tableFieldMix && strpos($target, '.') !== false)) {
+            if (!$tableFieldMix || ($tableFieldMix && strpos($target, '.') !== false)) {
                 $target = $this->tablePrefix . $target;
             }
 
@@ -1016,11 +1019,11 @@ class QueryBuilderHandler
      */
     protected function addStatement($key, $value)
     {
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             $value = array($value);
         }
 
-        if (! array_key_exists($key, $this->statements)) {
+        if (!array_key_exists($key, $this->statements)) {
             $this->statements[$key] = $value;
         } else {
             $this->statements[$key] = array_merge($this->statements[$key], $value);
