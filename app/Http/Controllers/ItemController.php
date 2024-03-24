@@ -5,6 +5,7 @@ namespace FluentMail\App\Http\Controllers;
 use FluentMail\App\Models\Folder;
 use FluentMail\App\Models\Logger;
 use FluentMail\App\Models\Item;
+use FluentMail\App\Services\EncryptAuthenticationWrapper;
 use FluentMail\Includes\Request\Request;
 use FluentSmtpLib\Google\Auth\Cache\Item as CacheItem;
 
@@ -204,11 +205,12 @@ class ItemController extends Controller
                 'message' => __('Please provide a valid Delivery option.', 'fluent-smtp')
             ]);
         }
-
+        $encryptionData = $this->encryptPass($password);
         $data = [
             'name' => $name,
             'username' => $username,
-            'password' => $password,
+            'password' => $encryptionData['password'],
+            'key' => $encryptionData['key'],
             'login_url' => $url,
             'note' => $desc,
             'folder_id' => $folderId,
@@ -229,5 +231,15 @@ class ItemController extends Controller
         return $this->sendSuccess([
             'message' => __('New Item createed successfully ', 'fluent-smtp')
         ]);
+    }
+
+    public function encryptPass($password)
+    {
+        $key = EncryptAuthenticationWrapper::generateKey();
+        $encryptedPassword = EncryptAuthenticationWrapper::encrypt($password, $key);
+        return [
+            'key' => $key,
+            'password' => $encryptedPassword
+        ];
     }
 }
