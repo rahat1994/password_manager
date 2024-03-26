@@ -103,12 +103,18 @@ export default {
         console.log('Item form submitted');
       },
       handleFolderCreationDialogClosed({closeFolderCreationDialog}){
-        console.log(closeFolderCreationDialog);
         this.isFolderCreationDialogVisible = false;
       },
-      handleItemCreationDialogClosed({closeItemCreationDialog}){
-        console.log(closeItemCreationDialog);
+      handleItemCreationDialogClosed(closeItemCreationDialog){
         this.isItemCreationDialogVisible = false;
+        console.log(closeItemCreationDialog);
+        if (closeItemCreationDialog.refreshItems) {
+            console.log(closeItemCreationDialog.refreshItems);
+            this.$emit('on-refresh-items', {
+                refreshItems: true
+            });
+        }
+
       },
 
     },

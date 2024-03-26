@@ -138,7 +138,7 @@ class ItemController extends Controller
 
         $itemType = $request->get('item_type');
 
-        $validItemTypes = ['login', 'card', 'identity', 'securenote'];
+        $validItemTypes = ['login', 'card', 'identity', 'secure_note'];
         if (!in_array($itemType, $validItemTypes)) {
             return $this->sendError([
                 'message' => __('Invalid item type.', 'fluent-smtp')

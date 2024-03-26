@@ -2,101 +2,76 @@
     <div class="content" style="background-color: #f5f7fa;">
         <el-row class="tac" :gutter="20">
             <el-col :span="5">
-                <el-menu
-                default-active="2"
-                class="el-menu-vertical-demo menu"
-                background-color="#545c64"
-                text-color="#fff" 
-                active-text-color="#ffd04b"
-                @open="handleOpen"
-                @close="handleClose">
+                <el-menu default-active="2" class="el-menu-vertical-demo menu" background-color="#545c64"
+                    text-color="#fff" active-text-color="#ffd04b" @open="handleOpen" @close="handleClose">
 
-                <el-submenu index="1">
-                    <template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>{{ $t('All Vaults') }}</span>
-                    </template>
-                    <el-menu-item-group>
-                        <!-- <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="vault.id">{{ vault.name }}</el-menu-item> -->
-                    </el-menu-item-group>
-                    <el-menu-item-group title="Group Two">
-                    <!-- <el-menu-item index="1-3">item three</el-menu-item> -->
-                    </el-menu-item-group>
-                    <el-submenu index="1-4">
-                    <template slot="title">item four</template>
-                    <!-- <el-menu-item index="1-4-1">item one</el-menu-item> -->
+                    <el-submenu index="1">
+                        <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>{{ $t('All Vaults') }}</span>
+                        </template>
+                        <el-menu-item-group>
+                            <!-- <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="vault.id">{{ vault.name }}</el-menu-item> -->
+                        </el-menu-item-group>
+                        <el-menu-item-group title="Group Two">
+                            <!-- <el-menu-item index="1-3">item three</el-menu-item> -->
+                        </el-menu-item-group>
+                        <el-submenu index="1-4">
+                            <template slot="title">item four</template>
+                            <!-- <el-menu-item index="1-4-1">item one</el-menu-item> -->
+                        </el-submenu>
                     </el-submenu>
-                </el-submenu>
-                <el-menu-item index="2">
-                    <i class="el-icon-menu"></i>
-                    <span>{{ $t('All Vaults') }}</span>
-                </el-menu-item>
+                    <el-menu-item index="2">
+                        <i class="el-icon-menu"></i>
+                        <span>{{ $t('All Vaults') }}</span>
+                    </el-menu-item>
                 </el-menu>
             </el-col>
 
             <el-col :span="18">
 
                 <div class="fss_header">
-                    <VaultBulkActions 
-                        :selected="selectedVaultItems" 
-                        @on-bulk-action="handleVaultBulkAction" 
-                        v-if="selectedVaultItems.length"
-                    />
+                    <VaultBulkActions :selected="selectedVaultItems" @on-bulk-action="handleVaultBulkAction"
+                        v-if="selectedVaultItems.length" />
 
-                    <div 
-                    v-if="!selectedVaultItems.length"
-                    style="float:left;margin-top:6px;"
-                    >{{ contentHeaderTitle }}</div>  
+                    <div v-if="!selectedVaultItems.length" style="float:left;margin-top:6px;">{{ contentHeaderTitle }}
+                    </div>
+
+                    <div style="float:right;margin-left: 6px;">
+                        <el-button @click="renderNewPage" type="success" size="small">
+                            <i class="el-icon-refresh"></i></el-button>
+                    </div>
 
                     <div style="float:right;">
-                        <el-input
-                            clearable
-                            size="small"
-                            v-model="filter.searchTerm"
-                            @clear="filter.searchTerm=''"
-                            @keyup.enter.native="fetchItems"
-                            :placeholder="$t('Type & press enter...')"
-                        >
-                            <el-button slot="append" icon="el-icon-search" @click="fetchItems"/>
+                        <el-input clearable size="small" v-model="filter.searchTerm" @clear="filter.searchTerm=''"
+                            @keyup.enter.native="fetchItems" :placeholder="$t('Type & press enter...')">
+                            <el-button slot="append" icon="el-icon-search" @click="fetchItems" />
                         </el-input>
-                    </div> 
+                    </div>
 
-                    <VaultHeaderButton 
-                        :folders="this.folders"
-                    />
-   
+                    <VaultHeaderButton :folders="this.folders" @on-refresh-items="refreshPage" />
+
                 </div>
 
-                <el-table
-                        stripe
-                        :data="vaultItems"
-                        style="width: 100%"
-                        @selection-change="handleSelectionChange"
-                    >
-                    <el-table-column
-                    type="selection"
-                    width="50">
+                <el-table stripe :data="vaultItems" style="width: 100%" @selection-change="handleSelectionChange">
+                    <el-table-column type="selection" width="50">
                     </el-table-column>
-                    <el-table-column
-                    :label="$t('Name')">
-                    <template slot-scope="scope">
-                        <span style="margin-left: 10px">{{ scope.row.name }}</span>
-                        <br>
-                        <span style="margin-left: 15px">{{ scope.row.username }}</span>
-                    </template>
+                    <el-table-column :label="$t('Name')">
+                        <template slot-scope="scope">
+                            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                            <br>
+                            <span style="margin-left: 15px">{{ scope.row.username }}</span>
+                        </template>
                     </el-table-column>
-                    <el-table-column
-                    :label="$t('Owner')">
-                    <template slot-scope="scope">
-                        <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.organisation.name }}</el-tag>
-                        </div>
-                    </template>
+                    <el-table-column :label="$t('Owner')">
+                        <template slot-scope="scope">
+                            <div slot="reference" class="name-wrapper">
+                                <el-tag size="medium">{{ scope.row.organisation.name }}</el-tag>
+                            </div>
+                        </template>
                     </el-table-column>
-                    <el-table-column
-                        prop="select"
-                        :label="$t('Options')">
-                    <!-- <template slot-scope="scope">
+                    <el-table-column prop="select" :label="$t('Options')">
+                        <!-- <template slot-scope="scope">
                         <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
                     </template> -->
                         <template slot-scope="scope">
@@ -106,28 +81,28 @@
                                 </span>
                                 <template>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item command="copy_username"  @click="copyUserName()" icon="el-icon-document-copy dropdown_item">{{ $t("Copy Username") }}</el-dropdown-item>
-                                        <el-dropdown-item command="copy_password" @click="copyPassword()" icon="el-icon-document-copy dropdown_item">{{ $t("Copy Password") }}</el-dropdown-item>
-                                        <el-dropdown-item divided command="delete_item" icon="el-icon-delete dropdown_item danger">                                            
+                                        <el-dropdown-item command="copy_username" @click="copyUserName()"
+                                            icon="el-icon-document-copy dropdown_item">{{ $t("Copy Username")
+                                            }}</el-dropdown-item>
+                                        <el-dropdown-item command="copy_password" @click="copyPassword()"
+                                            icon="el-icon-document-copy dropdown_item">{{ $t("Copy Password")
+                                            }}</el-dropdown-item>
+                                        <el-dropdown-item divided command="delete_item"
+                                            icon="el-icon-delete dropdown_item danger">
                                             <span class="danger"> {{ $t("Delete") }}</span>
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
-                                </template>                                
+                                </template>
                             </el-dropdown>
                         </template>
-                    
+
                     </el-table-column>
                 </el-table>
 
                 <div class="pagination_element_wrapper">
-                    <el-pagination
-                        background
-                        @current-change="changeCurrentPage"
-                        @currentPage="pagination.currentPage"
-                        :page-size="pagination.perPage"
-                        layout="total, prev, pager, next, jumper"
-                        :total="pagination.total"
-                    >
+                    <el-pagination background @current-change="changeCurrentPage" @currentPage="pagination.currentPage"
+                        :page-size="pagination.perPage" layout="total, prev, pager, next, jumper"
+                        :total="pagination.total">
                     </el-pagination>
                 </div>
 
@@ -213,7 +188,9 @@
                 this.active = this.$route.meta.parent || this.$route.name;
             },
             changeCurrentPage(val) {
+                console.log(val);
                 this.pagination.currentPage = val
+                this.renderNewPage();
             },
             changePerPage(val) {
                 this.pagination.perPage = val
@@ -279,6 +256,14 @@
                 });
                 return items;
             },
+            refreshPage({refreshPage}){
+                console.log(refreshPage);
+                this.fetchItems();
+            },
+            renderNewPage(){
+                this.fetchFolders();
+                this.fetchItems();
+            }
         },
         computed: {
             displayVaultItems() {

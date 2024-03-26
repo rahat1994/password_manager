@@ -177,7 +177,21 @@ export default {
                     offset: 19,
                     message: res.data.message
                 });
-                this.$emit('on-item-creation-dialog-closed', {closeFolderCreationDialog: true});
+                // clear the form
+                this.form = {
+                    item_type: '',
+                    name: '',
+                    folder: '',
+                    username: '',
+                    password: '',
+                    url: '',
+                    desc: '',
+                    masterPassProtected: false
+                };
+                this.$emit('on-item-creation-dialog-closed', {
+                    closeItemCreationDialog: true,
+                    refreshItems: true
+                });
             }).fail(res => {
                 if (Number(res.status) === 504) {
                     return this.$notify.error({
@@ -201,3 +215,12 @@ export default {
     }
 }
 </script>
+<style>
+.el-result{
+    text-align: center;
+}
+.el-result svg{
+    width: 100px;
+    height: 100px;
+}
+</style>
