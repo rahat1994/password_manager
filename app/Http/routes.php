@@ -65,3 +65,4 @@ $app->post('folder', 'FolderController@store');
 // item routes
 $app->get('item', 'ItemController@index');
 $app->post('item', 'ItemController@store');
+$app->post('item/update', 'ItemController@update');
