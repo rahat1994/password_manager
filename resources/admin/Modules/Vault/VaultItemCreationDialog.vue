@@ -39,10 +39,10 @@
                     <el-col :span="12">
 
                         <el-form-item prop="username">
-                            <el-input clearable size="small" v-model="form.username" @clear="form.username=''"
-                                @keyup.enter.native="fetch" :placeholder="$t('Username')">
-                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy"
-                                    @click="()=>{}" />
+                            <el-input clearable id="item_username" size="small" v-model="form.username"
+                                @clear="form.username=''" @keyup.enter.native="fetch" :placeholder="$t('Username')">
+                                <el-button class="btn" data-clipboard-target="#item_username" style="width: 3rem;"
+                                    slot="append" icon="el-icon-document-copy" />
                             </el-input>
                         </el-form-item>
 
@@ -95,6 +95,8 @@
 </template>
 
 <script>
+
+import ClipboardJS from 'clipboard';
 export default {
     name: "VaultItemCreationDialog",
     props: {
@@ -212,6 +214,20 @@ export default {
                 this.loading = false;
             });
         },
+        copyText(text){
+            console.log(text);
+            navigator.clipboard.writeText(text).then(function(){
+                this.$notify.success({
+                    title: 'Great!',
+                    offset: 19,
+                    message: "Succesfully copied to clipboard"
+                });
+            })
+        }
+    }, 
+    created: function(){
+        console.log("Hello there");
+        new ClipboardJS('.btn');
     }
 }
 </script>

@@ -102,8 +102,14 @@ export default {
       onItemCreationFormSubmit() {
         console.log('Item form submitted');
       },
-      handleFolderCreationDialogClosed({closeFolderCreationDialog}){
+      handleFolderCreationDialogClosed(closeFolderCreationDialog){
         this.isFolderCreationDialogVisible = false;
+
+        if (closeFolderCreationDialog.fetchFolders) {
+            this.$emit('on-refresh-folders', {
+                refreshFolders: true
+            });
+        }
       },
       handleItemCreationDialogClosed(closeItemCreationDialog){
         this.isItemCreationDialogVisible = false;

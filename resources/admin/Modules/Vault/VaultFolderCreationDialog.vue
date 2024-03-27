@@ -69,7 +69,7 @@ export default{
                     offset: 19,
                     message: res.data.message
                 });
-                this.$emit('on-folder-creation-dialog-closed', {closeFolderCreationDialog: true});
+                this.$emit('on-folder-creation-dialog-closed', {closeFolderCreationDialog: true, fetchFolders:true});
             }).fail(res => {
                 if (Number(res.status) === 504) {
                     return this.$notify.error({
