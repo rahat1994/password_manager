@@ -2,29 +2,30 @@
     <div class="content" style="background-color: #f5f7fa;">
         <el-row class="tac" :gutter="20">
             <el-col :span="5">
-                <el-menu default-active="2" class="el-menu-vertical-demo menu" background-color="#545c64"
-                    text-color="#fff" active-text-color="#ffd04b" @open="handleOpen" @close="handleClose">
-
+                <el-menu class="el-menu-vertical-demo menu" background-color="#545c64" text-color="#fff"
+                    active-text-color="#ffd04b" @open="handleOpen" @close="handleClose">
                     <el-submenu index="1">
                         <template slot="title">
                             <i class="el-icon-location"></i>
                             <span>{{ $t('All Vaults') }}</span>
                         </template>
-                        <el-menu-item-group>
-                            <!-- <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="vault.id">{{ vault.name }}</el-menu-item> -->
-                        </el-menu-item-group>
-                        <el-menu-item-group title="Group Two">
-                            <!-- <el-menu-item index="1-3">item three</el-menu-item> -->
-                        </el-menu-item-group>
-                        <el-submenu index="1-4">
-                            <template slot="title">item four</template>
-                            <!-- <el-menu-item index="1-4-1">item one</el-menu-item> -->
-                        </el-submenu>
+
+                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="'1'+vault.id.toString()">{{
+                            vault.name }}</el-menu-item>
+
                     </el-submenu>
-                    <el-menu-item index="2">
-                        <i class="el-icon-menu"></i>
-                        <span>{{ $t('All Vaults') }}</span>
-                    </el-menu-item>
+
+                    <el-submenu index="2">
+                        <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>{{ $t('Folders') }}</span>
+                        </template>
+                        <el-menu-item v-bind:key="folder.id" v-for="folder in folders" :index="folder.id.toString()"
+                            @click="menuItemClicked(folder)">
+                            {{folder.name }}
+                        </el-menu-item>
+
+                    </el-submenu>
                 </el-menu>
             </el-col>
 
@@ -49,7 +50,7 @@
                         </el-input>
                     </div>
 
-                    <VaultHeaderButton :folders="this.folders" @on-refresh-items="refreshPage" />
+                    <VaultHeaderButton :folders="this.folders" @on-refresh-items="refreshPage" @on-refresh-folders="fetchFolders" />
 
                 </div>
 
@@ -219,6 +220,7 @@
                 const data = {};
                 this.loadingFolders = true;
                 this.$get('folder', data).then(res => {
+                    console.log(res.data);
                     this.folders = res.data;
                 }).fail(error => {
                     console.log(error);
@@ -277,6 +279,12 @@
                 this.fetchFolders();
                 this.fetchItems();
             },
+
+            menuItemClicked(folder){
+                console.log("Hello there");
+                console.log(folder);
+            }
+
             handleItemCreationDialogClosed(closeItemCreationDialog){
                 this.isItemCreationDialogVisible = false;
             },
