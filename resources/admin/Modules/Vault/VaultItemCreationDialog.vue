@@ -1,6 +1,7 @@
 <template>
-    <el-dialog :title="(context === 'carete_item')?$t('Create New Item'):$t('Edit Item')" :visible.sync="isItemCreationDialogVisible"
-        :before-close="onItemCreationFormClose" :close-on-click-modal="false">
+    <el-dialog :title="(context === 'create_item')?$t('Create New Item'):$t('Edit Item')"
+        :visible.sync="isItemCreationDialogVisible" :before-close="onItemCreationFormClose"
+        :close-on-click-modal="false">
         <span>
             <el-form ref="itemCreationForm" size="mini" :rules="itemCreationFormRules" :model="form" label-width="11rem"
                 style="padding:2rem">
@@ -41,8 +42,8 @@
                         <el-form-item prop="username">
                             <el-input clearable id="item_username" size="small" v-model="form.username"
                                 @clear="form.username=''" @keyup.enter.native="fetch" :placeholder="$t('Username')">
-                                <el-button class="copy_item_username" data-clipboard-target="#item_username" style="width: 3rem;"
-                                    slot="append" icon="el-icon-document-copy" />
+                                <el-button class="copy_item_username" data-clipboard-target="#item_username"
+                                    style="width: 3rem;" slot="append" icon="el-icon-document-copy" />
                             </el-input>
                         </el-form-item>
 
@@ -51,7 +52,7 @@
                     <el-col :span="12">
 
                         <el-form-item prop="password">
-                            <el-input size="small" v-model="form.password" show-password="true"
+                            <el-input size="small" v-model="form.password" :show-password="true"
                                 :placeholder="$t('password')">
                                 <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy"
                                     @click="()=>{}" />
@@ -67,7 +68,8 @@
 
                         <el-input clearable size="small" v-model="form.url" @clear="form.url=''"
                             :placeholder="$t('URL')">
-                            <el-button style="width: 3rem;" slot="append" icon="el-icon-top-right" @click="() => openWindow(form.url)" />
+                            <el-button style="width: 3rem;" slot="append" icon="el-icon-top-right"
+                                @click="() => openWindow(form.url)" />
                         </el-input>
                     </el-col>
                 </el-form-item>
@@ -87,7 +89,7 @@
                 </div>
                 <el-form-item style="float:right">
                     <el-button type="primary" @click="onItemCreationFormSubmit('itemCreationForm')">Create</el-button>
-                    <el-button>Cancel</el-button>
+                    <el-button @click="onItemCreationFormClose">Cancel</el-button>
                 </el-form-item>
             </el-form>
         </span>

@@ -3,9 +3,11 @@
 namespace FluentMail\App\Http\Controllers;
 
 use Exception;
+use FluentMail\App\Models\Collection;
 use FluentMail\App\Models\Folder;
 use FluentMail\App\Models\Logger;
 use FluentMail\App\Models\Item;
+use FluentMail\App\Models\Organization;
 use FluentMail\App\Services\EncryptAuthenticationWrapper;
 use FluentMail\Includes\Request\Request;
 use FluentSmtpLib\Google\Auth\Cache\Item as CacheItem;
@@ -66,7 +68,8 @@ class ItemController extends Controller
         ]);
     }
 
-    public function dataSanitize(Request $request, Item $item, Folder $folder){
+    public function dataSanitize(Request $request, Item $item, Folder $folder)
+    {
 
         $itemType = $request->get('itemType');
 
@@ -139,7 +142,7 @@ class ItemController extends Controller
             ]);
         }
         $encryptionData = $this->encryptPass($password);
-        
+
         if (is_wp_error($encryptionData)) {
             return $this->sendError([
                 'message' => $encryptionData->get_error_message()
@@ -154,8 +157,6 @@ class ItemController extends Controller
             'login_url' => $url,
             'note' => $desc,
             'folder_id' => $folderId,
-            'collection_id' => 1,
-            'organization_id' => 1,
             'master_pass_secured' => $masterPassProtected,
             'user_id' => get_current_user_id()
         ];
@@ -167,7 +168,67 @@ class ItemController extends Controller
 
         $data = $this->dataSanitize($request, $item, $folder);
 
+        $organization = new Organization();
 
+        // add default Organization if not exists
+        $user_organizations = $organization->get([
+            'user_id' => get_current_user_id()
+        ]);
+
+        if (empty($user_organizations['data'])) {
+            // get current user email address
+            $user = get_userdata(get_current_user_id());
+            $organizationData = [
+                'name' => 'Default',
+                'billing_email' => $user->user_email,
+                'user_id' => get_current_user_id(),
+                'created_at' => current_time('mysql')
+            ];
+
+            $organization_id = $organization->add($organizationData);
+
+            if (is_wp_error($organization_id)) {
+                return $this->sendError([
+                    'message' => $organization_id->get_error_message()
+                ]);
+            }
+        } else {
+            $organization_id = $user_organizations['data'][0]['id'];
+        }
+
+        $collection = new Collection();
+        // add default collection if not exists
+        $user_collections = $collection->get([
+            'user_id' => get_current_user_id()
+        ]);
+
+        if (empty($user_collections['data'])) {
+            $collectionData = [
+                'name' => 'Default',
+                'user_id' => get_current_user_id(),
+                'organization_id' => $organization_id,
+                'created_at' => current_time('mysql')
+            ];
+
+            $collection_id = $collection->add($collectionData);
+
+            if (is_wp_error($collection_id)) {
+                return $this->sendError([
+                    'message' => $collection_id->get_error_message()
+                ]);
+            }
+        } else {
+            $collection_id = $user_collections['data'][0]['id'];
+        }
+
+        $data = array_merge($data, [
+            'collection_id' => $collection_id,
+            'organization_id' => $organization_id
+        ]);
+        // echo '<pre>';
+        // print_r($data);
+        // echo '</pre>';
+        // die();
         $result = $item->add($data);
 
         if (is_wp_error($result) || $result == 0) {
