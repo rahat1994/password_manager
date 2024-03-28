@@ -180,6 +180,17 @@ class Item extends Model
         }
     }
 
+    public function update($id, $data)
+    {
+        try {
+            return $this->getDb()->table($this->table)
+                ->where('id', $id)
+                ->update($data);
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     public function delete(array $id)
     {
         if ($id && $id[0] == 'all') {

@@ -107,20 +107,29 @@ export default {
         folders: {
             type: Array,
             default: () => []
+        },
+        context: {
+            type: String,
+            default: 'create_item'
+        },
+        form: {
+            type: Object,
+            default: () => {
+                return {
+                    item_type: '',
+                    name: '',
+                    folder: '',
+                    username: '',
+                    password: '',
+                    url: '',
+                    desc: '',
+                    masterPassProtected: false
+                }
+            }
         }
     },
     data() {
         return {
-            form: {
-                item_type: '',
-                name: '',
-                folder: '',
-                username: '',
-                password: '',
-                url: '',
-                desc: '',
-                masterPassProtected: false
-            },
             itemCreationFormRules:{
                 item_type: [
                     { required: true, message: 'Please select the item type', trigger: 'blur' }

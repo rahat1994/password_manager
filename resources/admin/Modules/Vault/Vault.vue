@@ -59,7 +59,9 @@
                     </el-table-column>
                     <el-table-column :label="$t('Name')">
                         <template slot-scope="scope">
-                            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                            <span @click="() => editItem(scope.row)" style="margin-left: 10px; font-weight:bold; cursor:pointer;">
+                                <a>{{ scope.row.name }}</a>                                
+                            </span>
                             <br>
                             <span style="margin-left: 15px">{{ scope.row.username }}</span>
                         </template>
@@ -109,16 +111,25 @@
 
             </el-col>
         </el-row>
+
+        <VaultItemCreationDialog
+            :isItemCreationDialogVisible="isItemEditingDialogVisible"
+            :folders="folders"
+            :form="itemEditingDialogData"
+            @on-item-creation-dialog-closed="handleItemCreationDialogClosed"
+        />
     </div>
 </template>
 <script type="text/babel">
     import VaultBulkActions from "./VaultBulkActions.vue";
     import VaultHeaderButton from "./VaultHeaderButton.vue";
+    import VaultItemCreationDialog from "./VaultItemCreationDialog.vue";
     export default {
         name: 'Vault',
         components: {
             VaultBulkActions,
-            VaultHeaderButton
+            VaultHeaderButton,
+            VaultItemCreationDialog
         },
         data() {
             return {
@@ -128,6 +139,8 @@
                     folder:null,
                     collections:null,
                 },
+                isItemEditingDialogVisible: false,
+                itemEditingDialogData: {},
                 page: 1,
                 loadingFolders:false,
                 loadingItems:false,
@@ -266,10 +279,20 @@
                 this.fetchFolders();
                 this.fetchItems();
             },
+
             menuItemClicked(folder){
                 console.log("Hello there");
                 console.log(folder);
             }
+
+            handleItemCreationDialogClosed(closeItemCreationDialog){
+                this.isItemCreationDialogVisible = false;
+            },
+            editItem(item){
+                console.log(item);
+                this.isItemEditingDialogVisible = true;
+                this.itemEditingDialogData = item;
+            },
         },
         computed: {
             displayVaultItems() {
