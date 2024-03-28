@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="$t('Create New Item')" :visible.sync="isItemCreationDialogVisible"
+    <el-dialog :title="(context === 'carete_item')?$t('Create New Item'):$t('Edit Item')" :visible.sync="isItemCreationDialogVisible"
         :before-close="onItemCreationFormClose" :close-on-click-modal="false">
         <span>
             <el-form ref="itemCreationForm" size="mini" :rules="itemCreationFormRules" :model="form" label-width="11rem"
@@ -41,7 +41,7 @@
                         <el-form-item prop="username">
                             <el-input clearable id="item_username" size="small" v-model="form.username"
                                 @clear="form.username=''" @keyup.enter.native="fetch" :placeholder="$t('Username')">
-                                <el-button class="btn" data-clipboard-target="#item_username" style="width: 3rem;"
+                                <el-button class="copy_item_username" data-clipboard-target="#item_username" style="width: 3rem;"
                                     slot="append" icon="el-icon-document-copy" />
                             </el-input>
                         </el-form-item>
@@ -67,7 +67,7 @@
 
                         <el-input clearable size="small" v-model="form.url" @clear="form.url=''"
                             :placeholder="$t('URL')">
-                            <el-button style="width: 3rem;" slot="append" icon="el-icon-top-right" @click="()=>{}" />
+                            <el-button style="width: 3rem;" slot="append" icon="el-icon-top-right" @click="() => openWindow(form.url)" />
                         </el-input>
                     </el-col>
                 </el-form-item>
@@ -174,6 +174,9 @@ export default {
             });
 
         },
+        openWindow(url){
+            window.open(url, '_blank');
+        },
         onItemCreationFormClose() {
             this.$emit('on-item-creation-dialog-closed', {closeItemCreationDialog: true});
         },
@@ -223,20 +226,27 @@ export default {
                 this.loading = false;
             });
         },
-        copyText(text){
-            console.log(text);
-            navigator.clipboard.writeText(text).then(function(){
-                this.$notify.success({
-                    title: 'Great!',
-                    offset: 19,
-                    message: "Succesfully copied to clipboard"
-                });
-            })
-        }
+
     }, 
     created: function(){
-        console.log("Hello there");
-        new ClipboardJS('.btn');
+        var itemUsernameCopyButton = new ClipboardJS('.copy_item_username', {
+            text: function(trigger) {
+
+                console.log(trigger);
+                return "This is a copy text";
+            }        
+        });
+        
+        itemUsernameCopyButton.on('success', function(e) {
+            // e.clearSelection();
+            // this.$notify.success({
+            //     title: 'Great!',
+            //     offset: 19,
+            //     message: 'Username copied to clipboard'
+            // });
+        });
+        console.log(this.form);
+        console.log(this.context);
     }
 }
 </script>

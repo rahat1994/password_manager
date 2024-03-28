@@ -116,6 +116,7 @@
             :isItemCreationDialogVisible="isItemEditingDialogVisible"
             :folders="folders"
             :form="itemEditingDialogData"
+            :context="'edit_item'"
             @on-item-creation-dialog-closed="handleItemCreationDialogClosed"
         />
     </div>
@@ -262,11 +263,13 @@
                             id: item.id,
                             name: item.name,
                             username: item.username,
+                            url: item.login_url,
                             password: "mypassword",
                             organisation: {
                                 name: "Staff Asia",
                                 id: 1
-                            }
+                            },
+                            masterPassProtected: (item.master_pass_secured === "1") ? true : false
                         };
                 });
                 return items;
@@ -283,10 +286,11 @@
             menuItemClicked(folder){
                 console.log("Hello there");
                 console.log(folder);
-            }
+            },
 
             handleItemCreationDialogClosed(closeItemCreationDialog){
-                this.isItemCreationDialogVisible = false;
+                console.log(closeItemCreationDialog);
+                this.isItemEditingDialogVisible = false;
             },
             editItem(item){
                 console.log(item);
