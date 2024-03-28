@@ -68,7 +68,7 @@ class ItemController extends Controller
 
     public function dataSanitize(Request $request, Item $item, Folder $folder){
 
-        $itemType = $request->get('item_type');
+        $itemType = $request->get('itemType');
 
         $validItemTypes = ['login', 'card', 'identity', 'secure_note'];
         if (!in_array($itemType, $validItemTypes)) {

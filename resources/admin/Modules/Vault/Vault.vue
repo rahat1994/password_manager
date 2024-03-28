@@ -117,6 +117,7 @@
             :folders="folders"
             :form="itemEditingDialogData"
             :context="'edit_item'"
+            :item_id="itemEditingDialogData.id"
             @on-item-creation-dialog-closed="handleItemCreationDialogClosed"
         />
     </div>
@@ -264,11 +265,14 @@
                             name: item.name,
                             username: item.username,
                             url: item.login_url,
-                            password: "mypassword",
+                            password: "secretpassword",
+                            folder: item.folder_id,
                             organisation: {
                                 name: "Staff Asia",
                                 id: 1
                             },
+                            itemType: 'login',
+                            desc: item.note,
                             masterPassProtected: (item.master_pass_secured === "1") ? true : false
                         };
                 });

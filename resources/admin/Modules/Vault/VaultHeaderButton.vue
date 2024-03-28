@@ -77,7 +77,7 @@ export default {
             isCollectionCreationDialogVisible: false,
             form: {
                 name: '',
-                item_type: '',
+                itemType: '',
                 folder: null,
                 username: '',
                 password: '',

@@ -5,9 +5,9 @@
             <el-form ref="itemCreationForm" size="mini" :rules="itemCreationFormRules" :model="form" label-width="11rem"
                 style="padding:2rem">
 
-                <el-form-item :label="$t('Item Type')" prop="item_type">
+                <el-form-item :label="$t('Item Type')" prop="itemType">
                     <el-col :span="24">
-                        <el-select v-model="form.item_type">
+                        <el-select v-model="form.itemType">
                             <el-option label="Login" value="login"></el-option>
                             <el-option label="Card" value="card"></el-option>
                             <el-option label="Identity" value="identity"></el-option>
@@ -51,7 +51,7 @@
                     <el-col :span="12">
 
                         <el-form-item prop="password">
-                            <el-input clearable size="small" v-model="form.password" show-password
+                            <el-input size="small" v-model="form.password" show-password="true"
                                 :placeholder="$t('password')">
                                 <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy"
                                     @click="()=>{}" />
@@ -112,11 +112,15 @@ export default {
             type: String,
             default: 'create_item'
         },
+        item_id: {
+            type: Number,
+            default: null
+        },
         form: {
             type: Object,
             default: () => {
                 return {
-                    item_type: '',
+                    itemType: '',
                     name: '',
                     folder: '',
                     username: '',
@@ -131,7 +135,7 @@ export default {
     data() {
         return {
             itemCreationFormRules:{
-                item_type: [
+                itemType: [
                     { required: true, message: 'Please select the item type', trigger: 'blur' }
                 ],
                 name: [
@@ -185,6 +189,49 @@ export default {
             this.loading = true;
             this.debug_info = '';
 
+            if(this.context == 'edit_item'){
+                this.$post('item/update', { 
+                    item_id: this.item_id,
+                    ...this.form 
+                }).then(res => {
+                    this.$notify.success({
+                        title: 'Great!',
+                        offset: 19,
+                        message: res.data.message
+                    });
+                    // clear the form
+                    this.form = {
+                        itemType: '',
+                        name: '',
+                        folder: '',
+                        username: '',
+                        password: '',
+                        url: '',
+                        desc: '',
+                        masterPassProtected: false
+                    };
+                    this.$emit('on-item-creation-dialog-closed', {closeItemCreationDialog: true, refreshItems: true});
+                }).fail(res => {
+                    if (Number(res.status) === 504) {
+                        return this.$notify.error({
+                            title: 'Oops!',
+                            offset: 19,
+                            message: '504 Gateway Time-out.'
+                        });
+                    } else if(Number(res.status) === 422){
+                        const responseJSON = res.responseJSON;
+                        
+                        return this.$notify.error({
+                            title: 'Oops!',
+                            offset: 19,
+                            message: res.data.message
+                        });
+                    }
+                }).always(() => {
+                    this.loading = false;
+                });
+                return;
+            }
             this.$post('item', { ...this.form }).then(res => {
                 this.$notify.success({
                     title: 'Great!',
@@ -193,7 +240,7 @@ export default {
                 });
                 // clear the form
                 this.form = {
-                    item_type: '',
+                    itemType: '',
                     name: '',
                     folder: '',
                     username: '',

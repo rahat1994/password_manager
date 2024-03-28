@@ -114,18 +114,7 @@ class Item extends Model
             $result = json_decode(json_encode($result), true);
         }
         $temp = [];
-
-        // {
-        //     id: i,
-        //     name: `Rahat Holland ${i}`,
-        //     username: "myusername",
-        //     password: "mypassword",
-        //     organisation:{
-        //         name: "Staff Asia",
-        //         id: 1
-        //     }
-
-        // }
+        
         foreach ($result as $key => $row) {
             $temp[$key] = [
                 'id' => $row->id,
