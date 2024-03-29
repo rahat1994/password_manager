@@ -44,7 +44,7 @@ class EncryptAuthenticationWrapper extends Encrypt
      * @param boolean $encoded - are we expecting an encoded string?
      * @return string (raw binary)
      */
-    public static function decrypt($message, $key, $encoded = false)
+    public static function decrypt($encrypted, $key, $encoded = false)
     {
         $decoded = base64_decode($encrypted);
         if ($decoded === false) {
@@ -64,8 +64,8 @@ class EncryptAuthenticationWrapper extends Encrypt
         if ($plain === false) {
             throw new Exception('the message was tampered with in transit');
         }
-        sodium_memzero($ciphertext);
-        sodium_memzero($key);
+        // sodium_memzero($ciphertext);
+        // sodium_memzero($key);
         return $plain;
     }
 

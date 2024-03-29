@@ -455,6 +455,10 @@ class QueryBuilderHandler
      */
     public function table($tables)
     {
+        // echo "<pre>";
+        // print_r($tables);
+        // echo "</pre>";
+        // die();
         if (!is_array($tables)) {
             // because a single table is converted to an array anyways,
             // this makes sense.
@@ -1007,7 +1011,6 @@ class QueryBuilderHandler
 
             $return[$key] = $value;
         }
-
         // If we had single value then we should return a single value (end value of the array)
         return $single ? end($return) : $return;
     }

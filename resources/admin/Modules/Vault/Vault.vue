@@ -265,7 +265,7 @@
                             name: item.name,
                             username: item.username,
                             url: item.login_url,
-                            password: "secretpassword",
+                            password: item.password,
                             folder: item.folder_id,
                             organisation: {
                                 name: "Staff Asia",

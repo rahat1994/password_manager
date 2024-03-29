@@ -18,13 +18,28 @@ class ItemController extends Controller
     public function index(Request $request, Item $item)
     {
         $this->verify();
-        return $this->send(
-            $item->get(
+        $items = $item->get(
                 array_merge(
-                    $request->except(['nonce', 'action']),
+                    $request->all(),
                     ['user_id' => get_current_user_id()]
                 )
-            )
+            );
+
+        foreach ($items['data'] as $key => $item) {
+            
+            if ($item['master_pass_secured']) {
+                $items['data'][$key]['password'] = '********';
+            }else {
+                $items['data'][$key]['password'] = $this->decryptPass($item['password'], base64_decode($item['key']));
+            }
+
+            if (isset($item['key'])) {
+                unset($items['data'][$key]['key']);
+            }
+        }
+
+        return $this->send(
+            $items
         );
     }
 
@@ -104,7 +119,7 @@ class ItemController extends Controller
         $password = sanitize_text_field($request->get('password'));
         $url = esc_url_raw($request->get('url')) === $request->get('url') ? $request->get('url') : '';
         $desc = sanitize_text_field($request->get('desc'));
-        $masterPassProtected = $request->get('delivery') ? true : false;
+        $masterPassProtected = $request->get('masterPassProtected') ? true : false;
 
         if (empty($name) || strlen($name) < 3 || strlen($name) > 100) {
             return $this->sendError([
@@ -129,16 +144,10 @@ class ItemController extends Controller
                 'message' => __('Please provide a valid URL.', 'fluent-smtp')
             ]);
         }
-
-        if (empty($desc) || strlen($desc) < 3 || strlen($desc) > 500) {
-            return $this->sendError([
-                'message' => __('Please provide a valid Description. It should be between 3 to 500 characters.', 'fluent-smtp')
-            ]);
-        }
-
+        
         if (!is_bool($masterPassProtected)) {
             return $this->sendError([
-                'message' => __('Please provide a valid Delivery option.', 'fluent-smtp')
+                'message' => __('Master Pass secured is a mandatory field', 'fluent-smtp')
             ]);
         }
         $encryptionData = $this->encryptPass($password);
@@ -264,6 +273,11 @@ class ItemController extends Controller
             'key' => $key,
             'password' => $encryptedPassword
         ];
+    }
+
+    public function decryptPass($password, $key)
+    {
+        return EncryptAuthenticationWrapper::decrypt($password, $key);
     }
 
     public function update(Request $request, Item $item, Folder $folder)

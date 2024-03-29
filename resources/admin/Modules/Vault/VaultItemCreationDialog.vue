@@ -88,7 +88,11 @@
                     <el-switch v-model="form.masterPassProtected"></el-switch>
                 </div>
                 <el-form-item style="float:right">
-                    <el-button type="primary" @click="onItemCreationFormSubmit('itemCreationForm')">Create</el-button>
+                    <el-button type="primary" @click="onItemCreationFormSubmit('itemCreationForm')">
+                        {{
+                            (context === 'create_item')?$t('Create Item'):$t('Update Item')
+                        }}                        
+                    </el-button>
                     <el-button @click="onItemCreationFormClose">Cancel</el-button>
                 </el-form-item>
             </el-form>
