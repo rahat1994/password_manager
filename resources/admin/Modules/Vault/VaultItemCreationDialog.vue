@@ -63,6 +63,7 @@
                     </el-col>
                 </el-form-item>
 
+                <p :if="form.masterPassProtected">This credential is protected by the masterpassword.</p>
                 <el-form-item :label="$t('URL')" prop="url">
                     <el-col :span="24">
 
