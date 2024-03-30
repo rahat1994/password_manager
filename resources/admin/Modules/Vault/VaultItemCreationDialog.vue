@@ -196,6 +196,7 @@ export default {
             this.loading = true;
             this.debug_info = '';
 
+            
             if(this.context == 'edit_item'){
                 this.$post('item/update', { 
                     item_id: this.item_id,

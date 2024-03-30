@@ -1,7 +1,7 @@
 <template>
-    <div class="content" style="background-color: #f5f7fa;">
+    <div v-if="!loadingItems" class="content" style="background-color: #f5f7fa;">
         <el-row class="tac" :gutter="20">
-            <el-col :span="5">
+            <el-col :span="5" style="height:100%">
                 <el-menu class="el-menu-vertical-demo menu" background-color="#545c64" text-color="#fff"
                     active-text-color="#ffd04b" @open="handleOpen" @close="handleClose">
                     <el-submenu index="1">
@@ -21,7 +21,7 @@
                             <span>{{ $t('Folders') }}</span>
                         </template>
                         <el-menu-item v-bind:key="folder.id" v-for="folder in folders" :index="folder.id.toString()"
-                            @click="menuItemClicked(folder)">
+                            @click="folderSelected(folder)">
                             {{folder.name }}
                         </el-menu-item>
 
@@ -117,13 +117,15 @@
             :folders="folders"
             :form="itemEditingDialogData"
             :context="'edit_item'"
-            :item_id="itemEditingDialogData.id"
+            :item_id="Number(itemEditingDialogData.id)"
             @on-item-creation-dialog-closed="handleItemCreationDialogClosed"
         />
     </div>
+    <el-skeleton :animated="true" v-else class="fss_content" :rows="15"></el-skeleton>
 </template>
 <script type="text/babel">
-    import VaultBulkActions from "./VaultBulkActions.vue";
+    import { Loading } from "element-ui";
+import VaultBulkActions from "./VaultBulkActions.vue";
     import VaultHeaderButton from "./VaultHeaderButton.vue";
     import VaultItemCreationDialog from "./VaultItemCreationDialog.vue";
     export default {
@@ -138,12 +140,13 @@
                 contentHeaderTitle: "All Vault",
                 filter: {
                     searchTerm: '',
-                    folder:null,
-                    collections:null,
+                    folderId:null,
+                    collectionId:null,
                 },
                 isItemEditingDialogVisible: false,
                 itemEditingDialogData: {},
                 page: 1,
+                loading:false,
                 loadingFolders:false,
                 loadingItems:false,
                 pagination: {
@@ -151,6 +154,7 @@
                     perPage: 10,
                     currentPage: 1
                 },
+                selectedFolder: null,
                 vaults: [
                     {
                         name: "Vault 1",
@@ -237,7 +241,8 @@
                 this.itemData = {
                     per_page: this.pagination.perPage,
                     page: this.pagination.currentPage,
-                    search: this.filter.searchTerm
+                    search: this.filter.searchTerm,
+                    folderId: this.filter.folderId
                 };
                 console.log(this.itemData);
                 this.$router.replace({ query: this.itemData });
@@ -286,12 +291,12 @@
                 this.fetchFolders();
                 this.fetchItems();
             },
-
-            menuItemClicked(folder){
-                console.log("Hello there");
+            folderSelected(folder){
                 console.log(folder);
+                this.filter.folderId = folder.id
+                this.selectedFolder = folder;
+                this.renderNewPage();
             },
-
             handleItemCreationDialogClosed(closeItemCreationDialog){
                 console.log(closeItemCreationDialog);
                 this.isItemEditingDialogVisible = false;
@@ -320,20 +325,7 @@
             }
         },
         created() {
-            for (let i = 1; i <= 60; i++) {                
-                    this.vaultItems.push({
-                        id: i,
-                        name: `Rahat Holland ${i}`,
-                        username: "myusername",
-                        password: "mypassword",
-                        organisation:{
-                            name: "Staff Asia",
-                            id: 1
-                        }
-
-                    });
-            }
-
+            
             const currentPage = this.$route.query.page;
 
             if (currentPage) {
@@ -346,6 +338,10 @@
 
             if (this.$route.query.search) {
                 this.filter.searchTerm = this.$route.query.search;
+            }
+
+            if (this.$route.query.folderId) {
+                this.filter.folderId = this.$route.query.folderId;
             }
 
             this.form = this.appVars.settings.misc;

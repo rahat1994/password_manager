@@ -93,6 +93,15 @@ class Item extends Model
                 }
             });
         }
+
+        if (!empty($data['organization_id'])) {
+            $query->where('organization_id', '=', $data['organization_id']);
+        }
+
+        if (!empty($data['folder_id'])) {
+            $query->where('folder_id', '=', $data['folder_id']);
+        }
+
         if (isset($data['user_id'])) {
             $query->where('user_id', '=', $data['user_id']);
         }
@@ -114,7 +123,7 @@ class Item extends Model
             $result = json_decode(json_encode($result), true);
         }
         $temp = [];
-        
+
         foreach ($result as $key => $row) {
             $temp[$key] = [
                 'id' => $row->id,

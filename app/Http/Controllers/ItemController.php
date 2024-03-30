@@ -18,18 +18,40 @@ class ItemController extends Controller
     public function index(Request $request, Item $item)
     {
         $this->verify();
+
+        $search = sanitize_text_field($request->get('search'));
+        $organization_id = sanitize_text_field($request->get('organizationId'));
+        $folder_id = sanitize_text_field($request->get('folderId'));
+        $collection_id = sanitize_text_field($request->get('collectionId'));
+        $page = sanitize_text_field($request->get('page'));
+        $per_page = sanitize_text_field($request->get('per_page'));
+
+        $data = [
+            'search' => $search,
+            'organization_id' => $organization_id,
+            'folder_id' => $folder_id,
+            'collection_id' => $collection_id,
+            'page' => $page,
+            'per_page' => $per_page
+        ];
+
+        // echo '<pre>';
+        // print_r($data);
+        // echo '</pre>';
+        // die();
+
         $items = $item->get(
-                array_merge(
-                    $request->all(),
-                    ['user_id' => get_current_user_id()]
-                )
-            );
+            array_merge(
+                $data,
+                ['user_id' => get_current_user_id()]
+            )
+        );
 
         foreach ($items['data'] as $key => $item) {
-            
+
             if ($item['master_pass_secured']) {
                 $items['data'][$key]['password'] = '********';
-            }else {
+            } else {
                 $items['data'][$key]['password'] = $this->decryptPass($item['password'], base64_decode($item['key']));
             }
 
@@ -119,7 +141,12 @@ class ItemController extends Controller
         $password = sanitize_text_field($request->get('password'));
         $url = esc_url_raw($request->get('url')) === $request->get('url') ? $request->get('url') : '';
         $desc = sanitize_text_field($request->get('desc'));
-        $masterPassProtected = $request->get('masterPassProtected') ? true : false;
+        $masterPassProtected = ($request->get('masterPassProtected') == "false") ? 0 : 1;
+
+        // echo '<pre>';
+        // print_r(var_dump($request->get('masterPassProtected')));
+        // echo '</pre>';
+        // die();
 
         if (empty($name) || strlen($name) < 3 || strlen($name) > 100) {
             return $this->sendError([
@@ -144,12 +171,12 @@ class ItemController extends Controller
                 'message' => __('Please provide a valid URL.', 'fluent-smtp')
             ]);
         }
-        
-        if (!is_bool($masterPassProtected)) {
-            return $this->sendError([
-                'message' => __('Master Pass secured is a mandatory field', 'fluent-smtp')
-            ]);
-        }
+
+        // if (!is_bool($masterPassProtected)) {
+        //     return $this->sendError([
+        //         'message' => __('Master Pass secured is a mandatory field', 'fluent-smtp')
+        //     ]);
+        // }
         $encryptionData = $this->encryptPass($password);
 
         if (is_wp_error($encryptionData)) {
