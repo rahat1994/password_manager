@@ -198,7 +198,7 @@ class Item extends Model
         $ids = array_filter($id, 'intval');
 
         if ($ids) {
-            return $this->getDb()->table(FLUENT_MAIL_DB_PREFIX . 'email_logs')
+            return $this->getDb()->table($this->table)
                 ->whereIn('id', $ids)
                 ->delete();
         }

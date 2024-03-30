@@ -66,3 +66,5 @@ $app->post('folder', 'FolderController@store');
 $app->get('item', 'ItemController@index');
 $app->post('item', 'ItemController@store');
 $app->post('item/update', 'ItemController@update');
+$app->post('item/delete', 'ItemController@delete');
+$app->post('item/bulk-move', 'ItemController@bulkMove');

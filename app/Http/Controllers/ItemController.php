@@ -35,11 +35,6 @@ class ItemController extends Controller
             'per_page' => $per_page
         ];
 
-        // echo '<pre>';
-        // print_r($data);
-        // echo '</pre>';
-        // die();
-
         $items = $item->get(
             array_merge(
                 $data,
@@ -85,24 +80,28 @@ class ItemController extends Controller
         return $this->sendSuccess($result);
     }
 
-    public function delete(Request $request, Logger $logger)
+    public function delete(Request $request, Item $item)
     {
         $this->verify();
 
-        $id = (array) $request->get('id');
+        $item_id = (array) $request->get('item_id');
 
-        $logger->delete($id);
+        $item->delete($item_id);
 
-        if ($id && $id[0] == 'all') {
+        if ($item_id && $item_id[0] == 'all') {
             $subject = 'All logs';
         } else {
-            $count = count($id);
-            $subject = $count > 1 ? "{$count} Logs" : 'Log';
+            $count = count($item_id);
+            $subject = $count > 1 ? "{$count} Items" : 'Item';
         }
 
         return $this->sendSuccess([
             'message' => "{$subject} deleted successfully."
         ]);
+    }
+
+    public function bulk_folder_move()
+    {
     }
 
     public function dataSanitize(Request $request, Item $item, Folder $folder)

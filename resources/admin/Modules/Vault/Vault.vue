@@ -3,29 +3,21 @@
         <el-row class="tac" :gutter="20">
             <el-col :span="5" style="height:100%">
                 <el-menu class="el-menu-vertical-demo menu" background-color="#545c64" text-color="#fff"
-                    active-text-color="#ffd04b" @open="handleOpen" @close="handleClose">
-                    <el-submenu index="1">
-                        <template slot="title">
-                            <i class="el-icon-location"></i>
-                            <span>{{ $t('All Vaults') }}</span>
-                        </template>
+                    :default-active="activeMenuItem" active-text-color="#ffd04b" @open="handleOpen"
+                    @close="handleClose">
 
-                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults" :index="'1'+vault.id.toString()">{{
+                    <el-menu-item-group :title="$t('All Vaults')">
+                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults"
+                            :index="'1-' + vault.id.toString()">{{
                             vault.name }}</el-menu-item>
+                    </el-menu-item-group>
 
-                    </el-submenu>
-
-                    <el-submenu index="2">
-                        <template slot="title">
-                            <i class="el-icon-location"></i>
-                            <span>{{ $t('Folders') }}</span>
-                        </template>
-                        <el-menu-item v-bind:key="folder.id" v-for="folder in folders" :index="folder.id.toString()"
+                    <el-menu-item-group :title="$t('Folders')">
+                        <el-menu-item v-bind:key="folder.id" v-for="folder in folders" :index="'2-'+folder.id.toString()"
                             @click="folderSelected(folder)">
-                            {{folder.name }}
+                            {{ folder.name }}
                         </el-menu-item>
-
-                    </el-submenu>
+                    </el-menu-item-group>
                 </el-menu>
             </el-col>
 
@@ -50,7 +42,8 @@
                         </el-input>
                     </div>
 
-                    <VaultHeaderButton :folders="this.folders" @on-refresh-items="refreshPage" @on-refresh-folders="fetchFolders" />
+                    <VaultHeaderButton :folders="this.folders" @on-refresh-items="refreshPage"
+                        @on-refresh-folders="fetchFolders" />
 
                 </div>
 
@@ -59,8 +52,9 @@
                     </el-table-column>
                     <el-table-column :label="$t('Name')">
                         <template slot-scope="scope">
-                            <span @click="() => editItem(scope.row)" style="margin-left: 10px; font-weight:bold; cursor:pointer;">
-                                <a>{{ scope.row.name }}</a>                                
+                            <span @click="() => editItem(scope.row)"
+                                style="margin-left: 10px; font-weight:bold; cursor:pointer;">
+                                <a>{{ scope.row.name }}</a>
                             </span>
                             <br>
                             <span style="margin-left: 15px">{{ scope.row.username }}</span>
@@ -112,14 +106,9 @@
             </el-col>
         </el-row>
 
-        <VaultItemCreationDialog
-            :isItemCreationDialogVisible="isItemEditingDialogVisible"
-            :folders="folders"
-            :form="itemEditingDialogData"
-            :context="'edit_item'"
-            :item_id="Number(itemEditingDialogData.id)"
-            @on-item-creation-dialog-closed="handleItemCreationDialogClosed"
-        />
+        <VaultItemCreationDialog :isItemCreationDialogVisible="isItemEditingDialogVisible" :folders="folders"
+            :form="itemEditingDialogData" :context="'edit_item'" :item_id="Number(itemEditingDialogData.id)"
+            @on-item-creation-dialog-closed="handleItemCreationDialogClosed" />
     </div>
     <el-skeleton :animated="true" v-else class="fss_content" :rows="15"></el-skeleton>
 </template>
@@ -322,6 +311,13 @@ import VaultBulkActions from "./VaultBulkActions.vue";
 
                 this.pagination.total = this.filtered.length
                 return this.filtered.slice(this.pagination.perPage * this.pagination.currentPage - this.pagination.perPage, this.pagination.perPage * this.pagination.currentPage)
+            },
+            activeMenuItem() {
+                if(this.filter.folderId){
+                    return '2-' + this.filter.folderId;
+
+                }
+                return null;
             }
         },
         created() {
