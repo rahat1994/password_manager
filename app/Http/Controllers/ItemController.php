@@ -346,4 +346,22 @@ class ItemController extends Controller
             'message' => "{$subject} deleted successfully."
         ]);
     }
+
+    public function validateMasterPassword(Request $request)
+    {
+        $user = wp_get_current_user();
+        $password = sanitize_text_field($request->get('password'));
+
+        if ($user && wp_check_password($password, $user->data->user_pass, $user->ID)) {
+            return $this->sendSuccess([
+                'success' => true,
+                'message' => __('Master password is correct.', 'fluent-smtp')
+            ]);
+        }
+
+        return $this->sendError([
+            'success' => false,
+            'message' => __('Master password is incorrect.', 'fluent-smtp')
+        ]);
+    }
 }

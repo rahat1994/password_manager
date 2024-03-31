@@ -1,20 +1,14 @@
 <template>
-    <el-dialog  
-        :title="$t('Create New Folder')" 
-        :visible.sync="isVisible"
-        :before-close="onFolderCrreationDialogClosed" 
-        :close-on-click-modal="false"
-    >
-        <el-form 
-            ref="folderCreationForm" 
-            :rules="folderCreationFormRules"  
-            :model="folderCreationForm" style="padding:3rem">
-            <el-form-item prop="name" :label="$t('Folder name')" :label-width="formLabelWidth">
+    <el-dialog :title="$t('Confirm Master Password')" :visible.sync="isVisible" :before-close="onFolderCrreationDialogClosed"
+        :close-on-click-modal="false">
+        <el-form ref="folderCreationForm" :rules="folderCreationFormRules" :model="folderCreationForm"
+            style="padding:3rem">
+            <el-form-item prop="name" :label="$t('Your Pasword')" :label-width="formLabelWidth">
                 <el-input v-model="folderCreationForm.name" autocomplete="off"></el-input>
             </el-form-item>
 
             <el-form-item style="float:right">
-                <el-button type="primary" @click="onFolderFormSubmit('folderCreationForm')">Create</el-button>
+                <el-button type="primary" @click="onFolderFormSubmit('folderCreationForm')">Confirm</el-button>
                 <el-button>Cancel</el-button>
             </el-form-item>
         </el-form>
@@ -22,10 +16,10 @@
 </template>
 
 <script>
-export default{
-    name: 'VaultFolderCreationDialog',
+export default {
+    name: 'VaultConfirmMasterPassword',
     props: ['isVisible'],
-    data(){
+    data() {
         return {
             loading: false,
             debug_info: '',
@@ -43,7 +37,7 @@ export default{
         }
     },
     methods: {
-        onFolderFormSubmit(formName){
+        onFolderFormSubmit(formName) {
             //this.$emit('on-folder-creation', this.folderCreationForm);
             //this.folderCreationForm.name = '';
             //this.folderCreationForm.desc = '';
@@ -58,7 +52,7 @@ export default{
             });
 
         },
-        createFolder(){
+        createFolder() {
 
             this.loading = true;
             this.debug_info = '';
@@ -69,7 +63,7 @@ export default{
                     offset: 19,
                     message: res.data.message
                 });
-                this.$emit('on-folder-creation-dialog-closed', {closeFolderCreationDialog: true, fetchFolders:true});
+                this.$emit('on-folder-creation-dialog-closed', { closeFolderCreationDialog: true, fetchFolders: true });
             }).fail(res => {
                 if (Number(res.status) === 504) {
                     return this.$notify.error({
@@ -77,9 +71,9 @@ export default{
                         offset: 19,
                         message: '504 Gateway Time-out.'
                     });
-                } else if(Number(res.status) === 422){
+                } else if (Number(res.status) === 422) {
                     const responseJSON = res.responseJSON;
-                    
+
                     return this.$notify.error({
                         title: 'Oops!',
                         offset: 19,
@@ -90,8 +84,8 @@ export default{
                 this.loading = false;
             });
         },
-        onFolderCrreationDialogClosed(){
-            this.$emit('on-folder-creation-dialog-closed', {closeFolderCreationDialog: true});
+        onFolderCrreationDialogClosed() {
+            this.$emit('on-folder-creation-dialog-closed', { closeFolderCreationDialog: true });
         }
     }
 }

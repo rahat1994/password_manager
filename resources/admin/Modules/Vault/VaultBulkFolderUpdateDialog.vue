@@ -20,7 +20,7 @@
 
 <script>
 export default {
-    name: 'VaultFolderCreationDialog',
+    name: 'VaultBulkFolderUpdateDialog',
     props: [
         'isVisible',
         'folders',
