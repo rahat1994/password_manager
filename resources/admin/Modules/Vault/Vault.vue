@@ -13,8 +13,8 @@
                     </el-menu-item-group>
 
                     <el-menu-item-group :title="$t('Folders')">
-                        <el-menu-item v-bind:key="folder.id" v-for="folder in folders" :index="'2-'+folder.id.toString()"
-                            @click="folderSelected(folder)">
+                        <el-menu-item v-bind:key="folder.id" v-for="folder in folders"
+                            :index="'2-'+folder.id.toString()" @click="folderSelected(folder)">
                             {{ folder.name }}
                         </el-menu-item>
                     </el-menu-item-group>
@@ -97,7 +97,7 @@
                 </el-table>
 
                 <div class="pagination_element_wrapper">
-                    <el-pagination background @current-change="changeCurrentPage" @currentPage="pagination.currentPage"
+                    <el-pagination background @current-change="changeCurrentPage" :current-page="pagination.currentPage"
                         :page-size="pagination.perPage" layout="total, prev, pager, next, jumper"
                         :total="pagination.total">
                     </el-pagination>
@@ -109,6 +109,10 @@
         <VaultItemCreationDialog :isItemCreationDialogVisible="isItemEditingDialogVisible" :folders="folders"
             :form="itemEditingDialogData" :context="'edit_item'" :item_id="Number(itemEditingDialogData.id)"
             @on-item-creation-dialog-closed="handleItemCreationDialogClosed" />
+
+        <VaultBulkFolderUpdateDialog :isVisible="isBulkFolderUpdateDialogVisible" :folders="folders"
+            :selectedItems="selectedVaultItems"
+            @on-folder-update-dialog-closed="this.isBulkFolderUpdateDialogVisible = false; fetchItems()" />
     </div>
     <el-skeleton :animated="true" v-else class="fss_content" :rows="15"></el-skeleton>
 </template>
@@ -117,12 +121,14 @@
 import VaultBulkActions from "./VaultBulkActions.vue";
     import VaultHeaderButton from "./VaultHeaderButton.vue";
     import VaultItemCreationDialog from "./VaultItemCreationDialog.vue";
+    import VaultBulkFolderUpdateDialog from "./VaultBulkFolderUpdateDialog.vue";
     export default {
         name: 'Vault',
         components: {
             VaultBulkActions,
             VaultHeaderButton,
-            VaultItemCreationDialog
+            VaultItemCreationDialog,
+            VaultBulkFolderUpdateDialog
         },
         data() {
             return {
@@ -133,6 +139,7 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                     collectionId:null,
                 },
                 isItemEditingDialogVisible: false,
+                isBulkFolderUpdateDialogVisible: false,
                 itemEditingDialogData: {},
                 page: 1,
                 loading:false,
@@ -197,7 +204,6 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 this.active = this.$route.meta.parent || this.$route.name;
             },
             changeCurrentPage(val) {
-                console.log(val);
                 this.pagination.currentPage = val
                 this.renderNewPage();
             },
@@ -205,11 +211,13 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 this.pagination.perPage = val
             },
             handleSelectionChange(val) {
-                console.log(val);
                 this.selectedVaultItems = val;
             },
-            handleVaultBulkAction(action) {
+            handleVaultBulkAction({action}) {
                 console.log(action);
+                if (action === 'moveselected') {
+                    this.isBulkFolderUpdateDialogVisible = true;
+                }
             },
             fetchFolders(){
                 const data = {};
@@ -233,7 +241,7 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                     search: this.filter.searchTerm,
                     folderId: this.filter.folderId
                 };
-                console.log(this.itemData);
+
                 this.$router.replace({ query: this.itemData });
 
                 this.$get('item', this.itemData).then(res => {
@@ -241,11 +249,8 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                     this.vaultItems = [];
                     this.pagination.total = res.total;
                     const page = Number(this.$route.query.page);
-                    this.pagination.current_page = page || this.pagination.current_page;
-
-                    this.vaultItems = this.formatItems(res.data);
- 
-                    
+                    this.pagination.currentPage = page || this.pagination.currentPage;
+                    this.vaultItems = this.formatItems(res.data);                    
                 }).fail(error => {
                     console.log(error);
                 }).always(() => {
@@ -282,6 +287,7 @@ import VaultBulkActions from "./VaultBulkActions.vue";
             },
             folderSelected(folder){
                 console.log(folder);
+                this.pagination.currentPage = 1;
                 this.filter.folderId = folder.id
                 this.selectedFolder = folder;
                 this.renderNewPage();
@@ -325,7 +331,7 @@ import VaultBulkActions from "./VaultBulkActions.vue";
             const currentPage = this.$route.query.page;
 
             if (currentPage) {
-                this.pagination.current_page = Number(currentPage);
+                this.pagination.currentPage = Number(currentPage);
             }
 
             if (this.$route.query.status) {

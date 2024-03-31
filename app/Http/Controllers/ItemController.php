@@ -328,4 +328,22 @@ class ItemController extends Controller
             'message' => __('Item updated successfully.', 'fluent-smtp')
         ]);
     }
+
+    public function bulkMove(Request $request)
+    {
+
+        $this->verify();
+        $item_id = (array) $request->get('itemId');
+        $folder_id = $request->get('folderId');
+        $item = new Item();
+        // $folder_id = 2;
+        $item->bulk_folder_move($item_id, $folder_id);
+
+        $count = count($item_id);
+        $subject = $count > 1 ? "{$count} Items" : 'Item';
+
+        return $this->sendSuccess([
+            'message' => "{$subject} deleted successfully."
+        ]);
+    }
 }

@@ -27,13 +27,6 @@
                         </template>
                         </el-result>
                     </el-col>
-                    <el-col :sm="12" :lg="8">
-                        <el-result icon="info" title="Create Collection" subTitle="Create a new collection.">
-                        <template slot="extra">
-                            <el-button type="primary" icon="el-icon-plus">Collection</el-button>
-                        </template>
-                        </el-result>
-                    </el-col>
                 </el-row>
             </span>
         </el-dialog>

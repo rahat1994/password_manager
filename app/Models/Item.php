@@ -189,6 +189,8 @@ class Item extends Model
         }
     }
 
+
+
     public function delete(array $id)
     {
         if ($id && $id[0] == 'all') {
@@ -201,6 +203,18 @@ class Item extends Model
             return $this->getDb()->table($this->table)
                 ->whereIn('id', $ids)
                 ->delete();
+        }
+
+        return false;
+    }
+
+    public function bulk_folder_move($item_ids, $folder_id)
+    {
+        $ids = array_filter($item_ids, 'intval');
+        if ($ids) {
+            return $this->getDb()->table($this->table)
+                ->whereIn('id', $ids)
+                ->update(['folder_id' => $folder_id]);
         }
 
         return false;
