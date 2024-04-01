@@ -45,7 +45,6 @@ export default {
             this.$refs[formName].validate((valid) => {
                 console.log(valid);
                 if (valid) {
-                    console.log(this.folderCreationForm.name);
                     this.createFolder();
                 } else {
                     return false;
@@ -57,8 +56,15 @@ export default {
 
             this.loading = true;
             this.debug_info = '';
+            console.log(this.itemId);
+            var formData = {
+                password: this.form.password,
+                itemId: this.itemId
+            };
 
-            this.$post('folder', { ...this.folderCreationForm }).then(res => {
+            this.$post('validate-master-password', 
+                        formData
+                    ).then(res => {
                 this.$notify.success({
                     title: 'Great!',
                     offset: 19,
@@ -88,6 +94,9 @@ export default {
         onDialogClosed() {
             this.$emit('on-folder-creation-dialog-closed', { closeFolderCreationDialog: true });
         }
+    },
+    created:()=>{
+        console.log(this.itemId);
     }
 }
 </script>

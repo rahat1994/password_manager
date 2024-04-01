@@ -351,11 +351,11 @@ class ItemController extends Controller
     {
         $user = wp_get_current_user();
         $password = sanitize_text_field($request->get('password'));
-        $item_id = sanitize_text_field($request->get('item_id'));
+        $item_id = sanitize_text_field($request->get('itemId'));
 
         $item = new Item();
         $item = $item->get([
-            'id' => $item_id,            
+            'id' => $item_id,
             'user_id' => get_current_user_id()
         ]);
 
@@ -365,12 +365,14 @@ class ItemController extends Controller
                 'message' => __('Item not found.', 'fluent-smtp')
             ]);
         }
-
+        $item = $item['data'][0];
+        $item['password'] = $this->decryptPass($item['password'], base64_decode($item['key']));
+        unset($item['key']);
         if ($user && wp_check_password($password, $user->data->user_pass, $user->ID)) {
             return $this->sendSuccess([
                 'success' => true,
-                'data' => $item['data'][0],
-                'message' => __('Master password is correct.', 'fluent-smtp')
+                'data' => $item,
+                'message' => __('Successfully authenticated.', 'fluent-smtp')
             ]);
         }
 

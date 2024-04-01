@@ -299,10 +299,11 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 this.renderNewPage();
             },
             handleItemCreationDialogClosed(closeItemCreationDialog){
-                console.log(closeItemCreationDialog);
                 this.isItemEditingDialogVisible = false;
             },
             editItem(item){
+                this.itemEditingDialogData = item
+                
                 if (item.masterPassProtected) {
                     this.isPasswordConfirmationDialogVisible = true;
                     // this.itemEditingDialogData = item;

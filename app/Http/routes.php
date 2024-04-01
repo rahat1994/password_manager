@@ -70,4 +70,4 @@ $app->post('item/delete', 'ItemController@delete');
 $app->post('item/bulk-move', 'ItemController@bulkMove');
 
 // user routes
-$app->get('user/validate-master-password', 'ItemController@validateMasterPassword');
+$app->post('validate-master-password', 'ItemController@validateMasterPassword');
