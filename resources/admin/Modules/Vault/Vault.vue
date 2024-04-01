@@ -113,6 +113,9 @@
         <VaultBulkFolderUpdateDialog :isVisible="isBulkFolderUpdateDialogVisible" :folders="folders"
             :selectedItems="selectedVaultItems"
             @on-folder-update-dialog-closed="this.isBulkFolderUpdateDialogVisible = false; fetchItems()" />
+
+        <VaultConfirmMasterPassword :isVisible="isPasswordConfirmationDialogVisible" :itemId="itemEditingDialogData.id" 
+         @on-master-pass-confirmation-dialog-closed="handleMasterPasswordConfirmed" />
     </div>
     <el-skeleton :animated="true" v-else class="fss_content" :rows="15"></el-skeleton>
 </template>
@@ -122,13 +125,15 @@ import VaultBulkActions from "./VaultBulkActions.vue";
     import VaultHeaderButton from "./VaultHeaderButton.vue";
     import VaultItemCreationDialog from "./VaultItemCreationDialog.vue";
     import VaultBulkFolderUpdateDialog from "./VaultBulkFolderUpdateDialog.vue";
+    import VaultConfirmMasterPassword from "./VaultConfirmMasterPassword.vue";
     export default {
         name: 'Vault',
         components: {
             VaultBulkActions,
             VaultHeaderButton,
             VaultItemCreationDialog,
-            VaultBulkFolderUpdateDialog
+            VaultBulkFolderUpdateDialog,
+            VaultConfirmMasterPassword
         },
         data() {
             return {
@@ -140,6 +145,7 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 },
                 isItemEditingDialogVisible: false,
                 isBulkFolderUpdateDialogVisible: false,
+                isPasswordConfirmationDialogVisible: false,
                 itemEditingDialogData: {},
                 page: 1,
                 loading:false,
@@ -297,10 +303,26 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 this.isItemEditingDialogVisible = false;
             },
             editItem(item){
-                console.log(item);
-                this.isItemEditingDialogVisible = true;
-                this.itemEditingDialogData = item;
+                if (item.masterPassProtected) {
+                    this.isPasswordConfirmationDialogVisible = true;
+                    // this.itemEditingDialogData = item;
+                } else {
+                    this.isItemEditingDialogVisible = true;
+                    this.itemEditingDialogData = item;
+                }
             },
+            handlePasswordConfirmationDialogClosed(){
+                this.isPasswordConfirmationDialogVisible = false;
+            },
+            handleMasterPasswordConfirmed(data){
+                const { success, item } = data;
+                this.isPasswordConfirmationDialogVisible = false;
+                if (success) {
+                    this.itemEditingDialogData = item;
+                    this.isItemEditingDialogVisible = true;
+                }
+                this.handlePasswordConfirmationDialogClosed();
+            }
         },
         computed: {
             displayVaultItems() {

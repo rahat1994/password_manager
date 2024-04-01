@@ -15,7 +15,7 @@
 
             <el-form-item style="float:right">
                 <el-button type="primary" @click="onFolderFormSubmit('folderCreationForm')">Create</el-button>
-                <el-button>Cancel</el-button>
+                <el-button @click="onFolderCrreationDialogClosed">Cancel</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>

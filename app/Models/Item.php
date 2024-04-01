@@ -69,6 +69,10 @@ class Item extends Model
             $query->where('status', sanitize_text_field($data['status']));
         }
 
+        if (!empty($data['id'])) {
+            $query->where('id', $data['id']);
+        }
+
         if (!empty($data['search'])) {
             $search = trim(sanitize_text_field($data['search']));
             $query->where(function ($q) use ($search) {

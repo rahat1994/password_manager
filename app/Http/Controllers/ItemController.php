@@ -351,10 +351,25 @@ class ItemController extends Controller
     {
         $user = wp_get_current_user();
         $password = sanitize_text_field($request->get('password'));
+        $item_id = sanitize_text_field($request->get('item_id'));
+
+        $item = new Item();
+        $item = $item->get([
+            'id' => $item_id,            
+            'user_id' => get_current_user_id()
+        ]);
+
+        if (empty($item['data'])) {
+            return $this->sendError([
+                'success' => false,
+                'message' => __('Item not found.', 'fluent-smtp')
+            ]);
+        }
 
         if ($user && wp_check_password($password, $user->data->user_pass, $user->ID)) {
             return $this->sendSuccess([
                 'success' => true,
+                'data' => $item['data'][0],
                 'message' => __('Master password is correct.', 'fluent-smtp')
             ]);
         }

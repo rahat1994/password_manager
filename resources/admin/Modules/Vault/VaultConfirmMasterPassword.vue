@@ -1,15 +1,15 @@
 <template>
-    <el-dialog :title="$t('Confirm Master Password')" :visible.sync="isVisible" :before-close="onFolderCrreationDialogClosed"
+    <el-dialog :title="$t('Confirm Master Password')" :visible.sync="isVisible" :before-close="onDialogClosed"
         :close-on-click-modal="false">
-        <el-form ref="folderCreationForm" :rules="folderCreationFormRules" :model="folderCreationForm"
+        <el-form ref="masterPasswordConfirmationForm" :rules="formRules" :model="form"
             style="padding:3rem">
             <el-form-item prop="name" :label="$t('Your Pasword')" :label-width="formLabelWidth">
-                <el-input v-model="folderCreationForm.name" autocomplete="off"></el-input>
+                <el-input placeholder="Please input password" v-model="form.password" show-password></el-input>
             </el-form-item>
 
             <el-form-item style="float:right">
-                <el-button type="primary" @click="onFolderFormSubmit('folderCreationForm')">Confirm</el-button>
-                <el-button>Cancel</el-button>
+                <el-button type="primary" @click="onFormSubmit('masterPasswordConfirmationForm')">Confirm</el-button>
+                <el-button @click="onDialogClosed">Cancel</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>
@@ -18,26 +18,27 @@
 <script>
 export default {
     name: 'VaultConfirmMasterPassword',
-    props: ['isVisible'],
+    props: [
+        'isVisible',
+        'itemId'
+    ],
     data() {
         return {
             loading: false,
             debug_info: '',
             formLabelWidth: '10rem',
-            folderCreationForm: {
-                name: '',
-                desc: ''
+            form: {
+                password: ''
             },
-            folderCreationFormRules: {
-                name: [
-                    { required: true, message: 'Please input the name', trigger: 'blur' },
-                    { min: 3, max: 100, message: 'Length should be 3 to 100', trigger: 'blur' }
+            formRules: {
+                password: [
+                    { required: true, message: 'Please input the password', trigger: 'blur' },
                 ]
             },
         }
     },
     methods: {
-        onFolderFormSubmit(formName) {
+        onFormSubmit(formName) {
             //this.$emit('on-folder-creation', this.folderCreationForm);
             //this.folderCreationForm.name = '';
             //this.folderCreationForm.desc = '';
@@ -84,7 +85,7 @@ export default {
                 this.loading = false;
             });
         },
-        onFolderCrreationDialogClosed() {
+        onDialogClosed() {
             this.$emit('on-folder-creation-dialog-closed', { closeFolderCreationDialog: true });
         }
     }

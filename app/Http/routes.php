@@ -68,3 +68,6 @@ $app->post('item', 'ItemController@store');
 $app->post('item/update', 'ItemController@update');
 $app->post('item/delete', 'ItemController@delete');
 $app->post('item/bulk-move', 'ItemController@bulkMove');
+
+// user routes
+$app->get('user/validate-master-password', 'ItemController@validateMasterPassword');
