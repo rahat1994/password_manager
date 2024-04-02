@@ -2,7 +2,6 @@
 
 namespace FluentMail\App\Services\Mailer\Providers\Gmail;
 
-use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Support\Arr;
 use FluentMail\App\Services\Mailer\BaseHandler;
 
@@ -92,7 +91,6 @@ class Handler extends BaseHandler
             $googleClient->setDefer(false);
 
             $googleMessageId = $status->getId();
-
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             return new \WP_Error(422, $errorMessage, []);

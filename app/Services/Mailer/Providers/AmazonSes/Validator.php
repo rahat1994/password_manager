@@ -2,7 +2,6 @@
 
 namespace FluentMail\App\Services\Mailer\Providers\AmazonSes;
 
-use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Support\Arr;
 use FluentMail\Includes\Support\ValidationException;
 use FluentMail\App\Services\Mailer\Providers\AmazonSes\SimpleEmailService;
@@ -25,7 +24,8 @@ class Validator
         $data = fluentMail('request')->except(['action', 'nonce']);
 
         $inputs = Arr::only(
-            $data['provider']['options'], ['access_key', 'secret_key', 'region']
+            $data['provider']['options'],
+            ['access_key', 'secret_key', 'region']
         );
 
         $ses = new SimpleEmailService(
@@ -43,7 +43,8 @@ class Validator
 
         if ($result) {
             $senderEmail = Arr::get(
-                $data, 'provider.options.sender_email'
+                $data,
+                'provider.options.sender_email'
             );
 
             if (!in_array($senderEmail, $result['Addresses'])) {
@@ -63,8 +64,12 @@ class Validator
         }
 
         $newException = new ValidationException(
-            '', $errno, null, array_merge(
-                $this->errors, [
+            '',
+            $errno,
+            null,
+            array_merge(
+                $this->errors,
+                [
                     'sender_email' => [
                         $errcontext['functionname'] => $message
                     ]

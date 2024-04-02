@@ -2,7 +2,6 @@
 
 namespace FluentMail\App\Services\Mailer;
 
-use FluentMail\App\Models\Logger;
 use FluentMail\App\Services\Mailer\Providers\Factory;
 use FluentMail\App\Services\Mailer\Providers\DefaultMail\Handler as PHPMailer;
 
@@ -34,7 +33,7 @@ class FluentPHPMailer
     public function sendViaFallback($rowId)
     {
         $driver = fluentMailGetProvider($this->phpMailer->From);
-        if($driver) {
+        if ($driver) {
             $driver->setRowId($rowId);
             return $driver->setPhpMailer($this->phpMailer)->send();
         }

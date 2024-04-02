@@ -1,13 +1,12 @@
 <?php
 /*
-Plugin Name:  FluentSMTP
-Plugin URI:   https://fluentsmtp.com
-Description:  The Ultimate SMTP Connection Plugin for WordPress.
-Version:      2.2.71
-Author:       FluentSMTP & WPManageNinja Team
-Author URI:   https://fluentsmtp.com
+Plugin Name:  PasswordManager
+Plugin URI:   https://github.com/rahat1994/password_manager
+Description:  Simple Password manager plugin for WordPress
+Version:      0.0.1
+Author:       Rahat Baksh
+Author URI:   https://github.com/rahat1994
 License:      GPL2
-License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  fluent-smtp
 Domain Path:  /language
 */
@@ -19,14 +18,16 @@ define('FLUENTMAIL_PLUGIN_FILE', __FILE__);
 require_once(plugin_dir_path(__FILE__) . 'boot.php');
 
 register_activation_hook(
-    __FILE__, array('\FluentMail\Includes\Activator', 'handle')
+    __FILE__,
+    array('\FluentMail\Includes\Activator', 'handle')
 );
 
 register_deactivation_hook(
-    __FILE__, array('\FluentMail\Includes\Deactivator', 'handle')
+    __FILE__,
+    array('\FluentMail\Includes\Deactivator', 'handle')
 );
 
-function fluentSmtpInit()
+function passmangerInit()
 {
     $application = new FluentMail\Includes\Core\Application;
     add_action('plugins_loaded', function () use ($application) {
@@ -34,15 +35,15 @@ function fluentSmtpInit()
     });
 }
 
-fluentSmtpInit();
+passmangerInit();
 
 if (!function_exists('wp_mail')) :
     function wp_mail($to, $subject, $message, $headers = '', $attachments = array())
     {
         return fluentMailSend($to, $subject, $message, $headers, $attachments);
     }
-else:
-    if (!(defined('DOING_AJAX') && DOING_AJAX)):
+else :
+    if (!(defined('DOING_AJAX') && DOING_AJAX)) :
         add_action('init', 'fluentMailFuncCouldNotBeLoadedRecheckPluginsLoad');
     endif;
 endif;

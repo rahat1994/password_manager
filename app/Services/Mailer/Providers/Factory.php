@@ -3,7 +3,6 @@
 namespace FluentMail\App\Services\Mailer\Providers;
 
 use InvalidArgumentException;
-use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Core\Application;
 
 class Factory
@@ -15,7 +14,7 @@ class Factory
     public function __construct(Application $app, Settings $settings)
     {
         $this->app = $app;
-        
+
         $this->settings = $settings;
     }
 
@@ -29,17 +28,17 @@ class Factory
         if (!($conn = $this->settings->getConnection($email))) {
             $conn = $this->getDefaultProvider();
         }
-        
+
         if ($conn) {
             $settings = array_merge($conn['provider_settings'], [
                 'title' => $conn['title']
             ]);
-            
+
             return $this->make(
                 $conn['provider_settings']['provider']
             )->setSettings($settings);
         }
-        
+
 
         throw new InvalidArgumentException(
             "There is no matching provider found by email: {$email}"
