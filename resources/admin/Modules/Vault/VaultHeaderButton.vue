@@ -106,7 +106,10 @@ export default {
       },
       handleItemCreationDialogClosed(closeItemCreationDialog){
         this.isItemCreationDialogVisible = false;
-        console.log(closeItemCreationDialog);
+
+        if (closeItemCreationDialog.closeGeneralDialog) {
+            this.isGeneralDialogVisible = false;
+        }
         if (closeItemCreationDialog.refreshItems) {
             console.log(closeItemCreationDialog.refreshItems);
             this.$emit('on-refresh-items', {

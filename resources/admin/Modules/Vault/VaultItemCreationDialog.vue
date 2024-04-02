@@ -259,6 +259,7 @@ export default {
                 };
                 this.$emit('on-item-creation-dialog-closed', {
                     closeItemCreationDialog: true,
+                    closeGeneralDialog: true,
                     refreshItems: true
                 });
             }).fail(res => {

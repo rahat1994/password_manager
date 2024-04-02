@@ -27,7 +27,7 @@ spl_autoload_register(function ($class) {
     $file = $path . $file . '.php';
 
     // Debug: print the file path
-    error_log('Trying to load file: ' . $file);
+    // error_log('Trying to load file: ' . $file);
 
     if (file_exists($file)) {
         require $file;
