@@ -35,7 +35,6 @@ class FluentMailDBMigrator
 
     public static function migrate()
     {
-        // \FluentMailMigrations\EmailLogs::migrate();
         \FluentMailMigrations\Organizations::migrate();
         \FluentMailMigrations\Collections::migrate();
         \FluentMailMigrations\Folders::migrate();

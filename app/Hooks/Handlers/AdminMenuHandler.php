@@ -47,7 +47,6 @@ class AdminMenuHandler
                     die();
                 });
             }
-
         }
 
         add_action('admin_bar_menu', array($this, 'addSimulationBar'), 999);
@@ -70,42 +69,44 @@ class AdminMenuHandler
                     return;
                 }
             }
-            ?>
-            <div
-                style="background-color: #fff;border: 1px solid #dcdcde;box-sizing: border-box;padding: 20px;margin: 15px 0;"
-                class="fluent_smtp_box">
+?>
+            <div style="background-color: #fff;border: 1px solid #dcdcde;box-sizing: border-box;padding: 20px;margin: 15px 0;" class="fluent_smtp_box">
                 <h3 style="margin: 0;">For SMTP, you already have FluentSMTP Installed</h3>
                 <p>You seem to be looking for an SMTP plugin, but there's no need for another one — FluentSMTP is
                     already installed on your site. FluentSMTP is a comprehensive, free, and open-source plugin with
-                    full features available without any upsell (<a
-                        href="https://fluentsmtp.com/why-we-built-fluentsmtp-plugin/">learn why it's free</a>). It's
+                    full features available without any upsell (<a href="https://fluentsmtp.com/why-we-built-fluentsmtp-plugin/">learn why it's free</a>). It's
                     compatible with various SMTP services, including Amazon SES, SendGrid, MailGun, ElasticEmail,
                     SendInBlue, Google, Microsoft, and others, providing you with a wide range of options for your email
                     needs.</p>
-                <a href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>"
-                   class="wp-core-ui button button-primary">Go To FluentSMTP Settings</a>
+                <a href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>" class="wp-core-ui button button-primary">Go To FluentSMTP Settings</a>
                 <p style="font-size: 80%; margin: 15px 0 0;">This notice is from FluentSMTP plugin to prevent plugin
                     conflict.</p>
             </div>
-            <?php
+        <?php
         }, 1);
-
     }
 
     public function addMenu()
     {
         $title = $this->app->applyCustomFilters('admin-menu-title', __('FluentSMTP', 'fluent-smtp'));
 
-        add_submenu_page(
-            'options-general.php',
-            $title,
-            $title,
-            'manage_options',
-            'fluent-mail',
-            [$this, 'renderApp'],
-            16
-        );
+        // add_submenu_page(
+        //     'options-general.php',
+        //     $title,
+        //     $title,
+        //     'manage_options',
+        //     'fluent-mail',
+        //     [$this, 'renderApp'],
+        //     16
+        // );
+        $title = 'Z Secured';
+        $capability = 'manage_options';
+        $menu_slug = 'z-secured';
+        $function = [$this, 'renderApp'];
+        $icon_url = 'dashicons-admin-generic'; // Use a Dashicon slug or the URL to a custom icon
+        $position = 4; // Position in the menu order
 
+        add_menu_page($title, $title, $capability, $menu_slug, $function, $icon_url, $position);
     }
 
     public function renderApp()
@@ -152,7 +153,6 @@ class AdminMenuHandler
                     wp_dequeue_script($wp_scripts->registered[$script]->handle);
                 }
             }
-
         }, 1);
 
         wp_enqueue_script(
@@ -167,7 +167,10 @@ class AdminMenuHandler
         wp_enqueue_script('dompurify', fluentMailMix('libs/purify/purify.min.js'), [], '2.4.3');
 
         wp_enqueue_style(
-            'fluent_mail_admin_app', fluentMailMix('admin/css/fluent-mail-admin.css'), [], FLUENTMAIL_PLUGIN_VERSION
+            'fluent_mail_admin_app',
+            fluentMailMix('admin/css/fluent-mail-admin.css'),
+            [],
+            FLUENTMAIL_PLUGIN_VERSION
         );
 
         $user = get_user_by('ID', get_current_user_id());
@@ -268,19 +271,18 @@ class AdminMenuHandler
                 </p>
             </div>
         <?php } else if (empty($connections)) {
-            ?>
+        ?>
             <div class="notice notice-warning">
                 <p>
                     <?php _e('FluentSMTP needs to be configured for it to work.', 'fluent-smtp'); ?>
                 </p>
                 <p>
-                    <a href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>"
-                       class="button button-primary">
+                    <a href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>" class="button button-primary">
                         <?php _e('Configure FluentSMTP', 'fluent-smtp'); ?>
                     </a>
                 </p>
             </div>
-            <?php
+        <?php
         }
     }
 
@@ -338,7 +340,6 @@ class AdminMenuHandler
                 [$this, 'dashWidgetContent']
             );
         });
-
     }
 
     public function dashWidgetContent()
@@ -379,27 +380,28 @@ class AdminMenuHandler
         <div class="fsmtp_dash_wrapper">
             <table class="fsmtp_dash_table wp-list-table widefat fixed striped">
                 <thead>
-                <tr>
-                    <th><?php _e('Date', 'fluent-smtp'); ?></th>
-                    <th><?php _e('Sent', 'fluent-smtp'); ?></th>
-                    <th><?php _e('Failed', 'fluent-smtp'); ?></th>
-                </tr>
+                    <tr>
+                        <th><?php _e('Date', 'fluent-smtp'); ?></th>
+                        <th><?php _e('Sent', 'fluent-smtp'); ?></th>
+                        <th><?php _e('Failed', 'fluent-smtp'); ?></th>
+                    </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($stats as $stat): ?>
-                    <tr>
-                        <td><?php echo $stat['title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-                        <td><?php echo $stat['sent']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-                        <td class="<?php echo ($stat['failed']) ? 'fstmp_failed' : ''; ?>"><?php echo $stat['failed']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-                    </tr>
-                <?php endforeach; ?>
+                    <?php foreach ($stats as $stat) : ?>
+                        <tr>
+                            <td><?php echo $stat['title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+                                ?></td>
+                            <td><?php echo $stat['sent']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+                                ?></td>
+                            <td class="<?php echo ($stat['failed']) ? 'fstmp_failed' : ''; ?>"><?php echo $stat['failed']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+                                                                                                ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
-            <a style="text-decoration: none; padding-top: 10px; display: block"
-               href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>"
-               class=""><?php _e('View All', 'fluent-smtp'); ?></a>
+            <a style="text-decoration: none; padding-top: 10px; display: block" href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>" class=""><?php _e('View All', 'fluent-smtp'); ?></a>
         </div>
-        <?php
+<?php
     }
 
     public function getTrans()
