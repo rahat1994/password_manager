@@ -39,20 +39,18 @@ export default {
     },
     methods: {
         onFormSubmit(formName) {
-            //this.$emit('on-folder-creation', this.folderCreationForm);
-            //this.folderCreationForm.name = '';
-            //this.folderCreationForm.desc = '';
+            
             this.$refs[formName].validate((valid) => {
                 console.log(valid);
                 if (valid) {
-                    this.createFolder();
+                    this.verifyPassword();
                 } else {
                     return false;
                 }
             });
 
         },
-        createFolder() {
+        verifyPassword() {
 
             this.loading = true;
             this.debug_info = '';
@@ -65,12 +63,21 @@ export default {
             this.$post('validate-master-password', 
                         formData
                     ).then(res => {
-                this.$notify.success({
-                    title: 'Great!',
-                    offset: 19,
-                    message: res.data.message
-                });
-                this.$emit('on-folder-creation-dialog-closed', { closeFolderCreationDialog: true, fetchFolders: true });
+
+                        if (res.success === true) {
+                            this.$notify.success({
+                                title: 'Great!',
+                                offset: 19,
+                                message: res.data.message
+                            });
+                            this.$emit('on-master-pass-confirmation-dialog-closed', { success: res.success, item: res.data});
+                        } else {
+                            this.$notify.error({
+                                title: 'Oops!',
+                                offset: 19,
+                                message: res.data.message
+                            });
+                        }
             }).fail(res => {
                 if (Number(res.status) === 504) {
                     return this.$notify.error({

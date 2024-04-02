@@ -5,13 +5,6 @@
                 <el-menu class="el-menu-vertical-demo menu" background-color="#545c64" text-color="#fff"
                     :default-active="activeMenuItem" active-text-color="#ffd04b" @open="handleOpen"
                     @close="handleClose">
-
-                    <el-menu-item-group :title="$t('All Vaults')">
-                        <el-menu-item v-bind:key="vault.id" v-for="vault in vaults"
-                            :index="'1-' + vault.id.toString()">{{
-                            vault.name }}</el-menu-item>
-                    </el-menu-item-group>
-
                     <el-menu-item-group :title="$t('Folders')">
                         <el-menu-item v-bind:key="folder.id" v-for="folder in folders"
                             :index="'2-'+folder.id.toString()" @click="folderSelected(folder)">
@@ -265,23 +258,26 @@ import VaultBulkActions from "./VaultBulkActions.vue";
             },
             formatItems(items){
                 jQuery.each(items, (i, item) => {
-                    items[i] = {
-                            id: item.id,
-                            name: item.name,
-                            username: item.username,
-                            url: item.login_url,
-                            password: item.password,
-                            folder: item.folder_id,
-                            organisation: {
-                                name: "Staff Asia",
-                                id: 1
-                            },
-                            itemType: 'login',
-                            desc: item.note,
-                            masterPassProtected: (item.master_pass_secured === "1") ? true : false
-                        };
+                    items[i] = this.formatItem(item);
                 });
                 return items;
+            },
+            formatItem(item){
+                return {
+                    id: item.id,
+                    name: item.name,
+                    username: item.username,
+                    url: item.login_url,
+                    password: item.password,
+                    folder: item.folder_id,
+                    organisation: {
+                        name: "Staff Asia",
+                        id: 1
+                    },
+                    itemType: 'login',
+                    desc: item.note,
+                    masterPassProtected: (item.master_pass_secured === "1") ? true : false
+                };
             },
             refreshPage({refreshPage}){
                 console.log(refreshPage);
@@ -317,9 +313,14 @@ import VaultBulkActions from "./VaultBulkActions.vue";
             },
             handleMasterPasswordConfirmed(data){
                 const { success, item } = data;
-                this.isPasswordConfirmationDialogVisible = false;
+                // this.isPasswordConfirmationDialogVisible = false;
+                console.log(data);
+                console.log(success);
+                console.log(item);
                 if (success) {
-                    this.itemEditingDialogData = item;
+
+                    //  format item first and then assign it to itemEditingDialogData
+                    this.itemEditingDialogData = this.formatItem(item);
                     this.isItemEditingDialogVisible = true;
                 }
                 this.handlePasswordConfirmationDialogClosed();

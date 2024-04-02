@@ -360,7 +360,7 @@ class ItemController extends Controller
         ]);
 
         if (empty($item['data'])) {
-            return $this->sendError([
+            return $this->send([
                 'success' => false,
                 'message' => __('Item not found.', 'fluent-smtp')
             ]);
@@ -368,15 +368,16 @@ class ItemController extends Controller
         $item = $item['data'][0];
         $item['password'] = $this->decryptPass($item['password'], base64_decode($item['key']));
         unset($item['key']);
+        
         if ($user && wp_check_password($password, $user->data->user_pass, $user->ID)) {
-            return $this->sendSuccess([
+            return $this->send([
                 'success' => true,
                 'data' => $item,
                 'message' => __('Successfully authenticated.', 'fluent-smtp')
             ]);
         }
 
-        return $this->sendError([
+        return $this->send([
             'success' => false,
             'message' => __('Master password is incorrect.', 'fluent-smtp')
         ]);
