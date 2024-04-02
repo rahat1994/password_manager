@@ -20,83 +20,14 @@ class AdminMenuHandler
     {
         add_action('admin_menu', array($this, 'addMenu'));
 
-        if (isset($_GET['page']) && $_GET['page'] == 'fluent-mail' && is_admin()) {
+        if (isset($_GET['page']) && $_GET['page'] == 'z-secured' && is_admin()) {
             add_action('admin_enqueue_scripts', array($this, 'enqueueAssets'));
-
-            if (isset($_REQUEST['sub_action']) && $_REQUEST['sub_action'] == 'slack_success') {
-                add_action('admin_init', function () {
-                    $settings = (new Settings())->notificationSettings();
-                    $token = Arr::get($_REQUEST, 'site_token');
-
-                    if ($token == Arr::get($settings, 'slack.token')) {
-                        $settings['slack'] = [
-                            'status'       => 'yes',
-                            'token'        => sanitize_text_field($token),
-                            'slack_team'   => sanitize_text_field(Arr::get($_REQUEST, 'slack_team')),
-                            'webhook_url' => sanitize_url(Arr::get($_REQUEST, 'slack_webhook'))
-                        ];
-
-                        $settings['active_channel'] = 'slack';
-
-                        update_option('_fluent_smtp_notify_settings', $settings);
-                    }
-
-                    wp_redirect(admin_url('options-general.php?page=fluent-mail#/notification-settings'));
-                    die();
-                });
-            }
         }
-
-        add_action('admin_bar_menu', array($this, 'addSimulationBar'), 999);
-
-        add_action('admin_init', array($this, 'initAdminWidget'));
-
-
-        add_action('install_plugins_table_header', function () {
-            if (!isset($_REQUEST['s']) || empty($_REQUEST['s']) || empty($_REQUEST['tab']) || $_REQUEST['tab'] != 'search') {
-                return;
-            }
-
-            $search = str_replace(['%20', '_', '-'], ' ', $_REQUEST['s']);
-            $search = trim(strtolower(sanitize_text_field($search)));
-
-            $searchTerms = ['wp-mail-smtp', 'wp mail', 'wp mail smtp', 'post mailer', 'wp smtp', 'smtp mail', 'smtp', 'post smtp', 'easy smtp', 'easy wp smtp', 'smtp mailer', 'gmail smtp', 'offload ses'];
-
-            if (!strpos($search, 'smtp')) {
-                if (!in_array($search, $searchTerms)) {
-                    return;
-                }
-            }
-?>
-            <div style="background-color: #fff;border: 1px solid #dcdcde;box-sizing: border-box;padding: 20px;margin: 15px 0;" class="fluent_smtp_box">
-                <h3 style="margin: 0;">For SMTP, you already have FluentSMTP Installed</h3>
-                <p>You seem to be looking for an SMTP plugin, but there's no need for another one — FluentSMTP is
-                    already installed on your site. FluentSMTP is a comprehensive, free, and open-source plugin with
-                    full features available without any upsell (<a href="https://fluentsmtp.com/why-we-built-fluentsmtp-plugin/">learn why it's free</a>). It's
-                    compatible with various SMTP services, including Amazon SES, SendGrid, MailGun, ElasticEmail,
-                    SendInBlue, Google, Microsoft, and others, providing you with a wide range of options for your email
-                    needs.</p>
-                <a href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>" class="wp-core-ui button button-primary">Go To FluentSMTP Settings</a>
-                <p style="font-size: 80%; margin: 15px 0 0;">This notice is from FluentSMTP plugin to prevent plugin
-                    conflict.</p>
-            </div>
-        <?php
-        }, 1);
     }
 
     public function addMenu()
     {
         $title = $this->app->applyCustomFilters('admin-menu-title', __('FluentSMTP', 'fluent-smtp'));
-
-        // add_submenu_page(
-        //     'options-general.php',
-        //     $title,
-        //     $title,
-        //     'manage_options',
-        //     'fluent-mail',
-        //     [$this, 'renderApp'],
-        //     16
-        // );
         $title = 'Z Secured';
         $capability = 'manage_options';
         $menu_slug = 'z-secured';
