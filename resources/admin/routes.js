@@ -15,13 +15,5 @@ export default [
             title: 'Vault',
         },
         component: Vault,
-    },
-    {
-        name: 'Tools',
-        path: '/tools',
-        meta: {
-            title: 'Tools',
-        },
-        component: Logs,
     }
 ];

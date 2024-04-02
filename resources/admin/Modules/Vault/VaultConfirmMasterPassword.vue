@@ -99,7 +99,7 @@ export default {
             });
         },
         onDialogClosed() {
-            this.$emit('on-folder-creation-dialog-closed', { closeFolderCreationDialog: true });
+            this.$emit('on-master-pass-confirmation-dialog-closed', { closeFolderCreationDialog: true });
         }
     },
     created:()=>{

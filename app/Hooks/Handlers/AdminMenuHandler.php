@@ -120,7 +120,7 @@ class AdminMenuHandler
 
         wp_localize_script('fluent_mail_admin_app_boot', 'FluentMailAdmin', [
             'slug'                   => FLUENTMAIL,
-            'brand_logo'             => esc_url(fluentMailMix('images/logo.svg')),
+            'brand_logo'             => esc_url(fluentMailMix('images/zlogo.svg')),
             'nonce'                  => wp_create_nonce(FLUENTMAIL),
             'settings'               => $settings,
             'images_url'             => esc_url(fluentMailMix('images/')),
