@@ -32,7 +32,7 @@ class AdminMenuHandler
         $capability = 'manage_options';
         $menu_slug = 'z-secured';
         $function = [$this, 'renderApp'];
-        $icon_url = 'dashicons-admin-generic'; // Use a Dashicon slug or the URL to a custom icon
+        $icon_url = 'dashicons-lock'; // Use a Dashicon slug or the URL to a custom icon
         $position = 4; // Position in the menu order
 
         add_menu_page($title, $title, $capability, $menu_slug, $function, $icon_url, $position);

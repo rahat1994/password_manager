@@ -10,7 +10,7 @@ import Vault from './Modules/Vault/Vault.vue';
 export default [
     {
         name: 'Vault',
-        path: '/vault',
+        path: '/',
         meta: {
             title: 'Vault',
         },
