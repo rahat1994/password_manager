@@ -3,8 +3,6 @@
 namespace FluentMail\App\Http\Controllers;
 
 use FluentMail\App\Models\Folder;
-use FluentMail\App\Models\Logger;
-use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Request\Request;
 
 class FolderController extends Controller

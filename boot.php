@@ -24,5 +24,15 @@ spl_autoload_register(function ($class) {
         $class
     );
 
-    require(trailingslashit($path) . trim($file, '/') . '.php');
+    $file = $path . $file . '.php';
+
+    // Debug: print the file path
+    error_log('Trying to load file: ' . $file);
+
+    if (file_exists($file)) {
+        require $file;
+    } else {
+        // Debug: print a message if the file doesn't exist
+        error_log('File does not exist: ' . $file);
+    }
 });

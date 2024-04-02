@@ -2,8 +2,6 @@
 
 namespace FluentMail\App\Hooks\Handlers;
 
-use FluentMail\App\Models\Logger;
-use FluentMail\App\Models\Settings;
 use FluentMail\App\Services\Converter;
 use FluentMail\Includes\Core\Application;
 use FluentMail\App\Services\Mailer\Manager;
@@ -282,7 +280,7 @@ class AdminMenuHandler
                     </a>
                 </p>
             </div>
-        <?php
+<?php
         }
     }
 
@@ -344,64 +342,6 @@ class AdminMenuHandler
 
     public function dashWidgetContent()
     {
-        $stats = [];
-        $logModel = new Logger();
-        $currentTimeStamp = current_time('timestamp');
-        $startToday = date('Y-m-d 00:00:01', $currentTimeStamp);
-
-        $allTime = $logModel->getStats();
-
-        $stats['today'] = [
-            'title'  => __('Today', 'fluent-smtp'),
-            'sent'   => ($allTime['sent']) ? $logModel->getTotalCountStat('sent', $startToday) : 0,
-            'failed' => ($allTime['failed']) ? $logModel->getTotalCountStat('failed', $startToday) : 0
-        ];
-
-        $lastWeek = date('Y-m-d 00:00:01', strtotime('-7 days'));
-        $stats['week'] = [
-            'title'  => __('Last 7 days', 'fluent-smtp'),
-            'sent'   => ($allTime['sent']) ? $logModel->getTotalCountStat('sent', $lastWeek) : 0,
-            'failed' => ($allTime['failed']) ? $logModel->getTotalCountStat('failed', $lastWeek) : 0,
-        ];
-
-        $stats['all_time'] = [
-            'title'  => __('All', 'fluent-smtp'),
-            'sent'   => $allTime['sent'],
-            'failed' => $allTime['failed'],
-        ];
-
-        ?>
-        <style type="text/css">
-            td.fstmp_failed {
-                color: red;
-                font-weight: bold;
-            }
-        </style>
-        <div class="fsmtp_dash_wrapper">
-            <table class="fsmtp_dash_table wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th><?php _e('Date', 'fluent-smtp'); ?></th>
-                        <th><?php _e('Sent', 'fluent-smtp'); ?></th>
-                        <th><?php _e('Failed', 'fluent-smtp'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($stats as $stat) : ?>
-                        <tr>
-                            <td><?php echo $stat['title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
-                                ?></td>
-                            <td><?php echo $stat['sent']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
-                                ?></td>
-                            <td class="<?php echo ($stat['failed']) ? 'fstmp_failed' : ''; ?>"><?php echo $stat['failed']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
-                                                                                                ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <a style="text-decoration: none; padding-top: 10px; display: block" href="<?php echo admin_url('options-general.php?page=fluent-mail#/'); ?>" class=""><?php _e('View All', 'fluent-smtp'); ?></a>
-        </div>
-<?php
     }
 
     public function getTrans()

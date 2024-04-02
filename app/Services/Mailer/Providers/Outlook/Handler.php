@@ -2,7 +2,6 @@
 
 namespace FluentMail\App\Services\Mailer\Providers\Outlook;
 
-use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Support\Arr;
 use FluentMail\App\Services\Mailer\BaseHandler;
 
@@ -57,7 +56,7 @@ class Handler extends BaseHandler
 
         $result = $api->sendMime($mime, $accessToken);
 
-        if(is_wp_error($result)) {
+        if (is_wp_error($result)) {
             $errorMessage = $result->get_error_message();
             return new \WP_Error(422, $errorMessage, []);
         } else {
@@ -65,7 +64,6 @@ class Handler extends BaseHandler
                 'RequestId' => $result['request-id'],
             );
         }
-
     }
 
     public function validateProviderInformation($connection)
@@ -158,14 +156,14 @@ class Handler extends BaseHandler
     {
         $accessToken = $config['access_token'];
         // check if expired or will be expired in 300 seconds
-        if ( ($config['expire_stamp'] - 300) < time()) {
+        if (($config['expire_stamp'] - 300) < time()) {
             $fluentAPi = (new API($config['client_id'], $config['client_secret']));
 
             $tokens = $fluentAPi->sendTokenRequest('refresh_token', [
                 'refresh_token' => $config['refresh_token']
             ]);
 
-            if(is_wp_error($tokens)) {
+            if (is_wp_error($tokens)) {
                 return false;
             }
 

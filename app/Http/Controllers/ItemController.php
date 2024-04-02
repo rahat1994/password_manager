@@ -5,7 +5,6 @@ namespace FluentMail\App\Http\Controllers;
 use Exception;
 use FluentMail\App\Models\Collection;
 use FluentMail\App\Models\Folder;
-use FluentMail\App\Models\Logger;
 use FluentMail\App\Models\Item;
 use FluentMail\App\Models\Organization;
 use FluentMail\App\Services\EncryptAuthenticationWrapper;
@@ -368,7 +367,7 @@ class ItemController extends Controller
         $item = $item['data'][0];
         $item['password'] = $this->decryptPass($item['password'], base64_decode($item['key']));
         unset($item['key']);
-        
+
         if ($user && wp_check_password($password, $user->data->user_pass, $user->ID)) {
             return $this->send([
                 'success' => true,

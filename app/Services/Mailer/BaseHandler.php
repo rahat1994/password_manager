@@ -3,7 +3,6 @@
 namespace FluentMail\App\Services\Mailer;
 
 use Exception;
-use FluentMail\App\Models\Logger;
 use FluentMail\Includes\Support\Arr;
 use FluentMail\Includes\Core\Application;
 use FluentMail\App\Services\Mailer\Manager;
@@ -14,11 +13,11 @@ class BaseHandler
     use ValidatorTrait;
 
     protected $app = null;
-    
+
     protected $params = [];
 
     protected $manager = null;
-    
+
     protected $phpMailer = null;
 
     protected $settings = [];
@@ -39,7 +38,7 @@ class BaseHandler
     {
         $this->phpMailer = $phpMailer;
 
-        if(!$this->phpMailer->CharSet) {
+        if (!$this->phpMailer->CharSet) {
             $this->phpMailer->CharSet = 'UTF-8';
         }
 
@@ -57,7 +56,7 @@ class BaseHandler
     protected function preSend()
     {
         $this->attributes = [];
-        
+
         if ($this->isForced('from_name')) {
             $this->phpMailer->FromName = $this->getSetting('sender_name');
         }
@@ -100,13 +99,13 @@ class BaseHandler
     protected function setAttributes()
     {
         $from = $this->setFrom();
-        
+
         $replyTos = $this->setRecipientsArray(array_values(
             $this->phpMailer->getReplyToAddresses()
         ));
-        
+
         $contentType = $this->phpMailer->ContentType;
-        
+
         $customHeaders = $this->setFormattedCustomHeaders();
 
         $recipients = [
@@ -160,7 +159,7 @@ class BaseHandler
             $recipient = array_filter($recipient);
 
             if (!$recipient) continue;
-            
+
             $recipients[$key] = [
                 'email' => array_shift($recipient)
             ];
@@ -226,7 +225,9 @@ class BaseHandler
     {
         try {
             return Arr::get(
-                $this->attributes['headers'], $key, $default
+                $this->attributes['headers'],
+                $key,
+                $default
             );
         } catch (Exception $e) {
             return $default;
@@ -253,7 +254,7 @@ class BaseHandler
 
     public function handleResponse($response)
     {
-        if ( is_wp_error($response) ) {
+        if (is_wp_error($response)) {
             $code = $response->get_error_code();
 
             if (!is_numeric($code)) {
@@ -271,7 +272,6 @@ class BaseHandler
             $this->processResponse($errorResponse, false);
 
             throw new \PHPMailer\PHPMailer\Exception($message, $code);
-
         } else {
             return $this->processResponse($response, true);
         }
@@ -292,29 +292,29 @@ class BaseHandler
                 'extra'    => maybe_serialize($this->getExtraParams())
             ];
 
-            if($this->existing_row_id) {
+            if ($this->existing_row_id) {
                 $row = (new Logger())->find($this->existing_row_id);
-                if($row) {
+                if ($row) {
                     $row['response'] = (array) $row['response'];
-                    if($status) {
-                        $row['response']['fallback'] = 'Sent using fallback connection '.$this->attributes['from'];
+                    if ($status) {
+                        $row['response']['fallback'] = 'Sent using fallback connection ' . $this->attributes['from'];
                         $row['response']['fallback_response'] = $response;
                     } else {
-                        $row['response']['fallback'] = 'Tried to send using fallback but failed. '.$this->attributes['from'];
+                        $row['response']['fallback'] = 'Tried to send using fallback but failed. ' . $this->attributes['from'];
                         $row['response']['fallback_response'] = $response;
                     }
 
-                    $data['response'] = maybe_serialize( $row['response']);
+                    $data['response'] = maybe_serialize($row['response']);
                     $data['retries'] = $row['retries'] + 1;
                     (new Logger())->updateLog($data, ['id' => $row['id']]);
 
-                    if(!$status) {
+                    if (!$status) {
                         do_action('fluentmail_email_sending_failed_no_fallback', $row['id'], $this, $data);
                     }
                 }
             } else {
                 $logId = (new Logger)->add($data);
-                if(!$status) {
+                if (!$status) {
                     // We have to fire an action for this failed job
                     do_action('fluentmail_email_sending_failed', $logId, $this, $data);
                 }
@@ -326,7 +326,7 @@ class BaseHandler
 
     protected function shouldBeLogged($status)
     {
-        if($this->existing_row_id) {
+        if ($this->existing_row_id) {
             return true;
         }
         if (defined('FLUENTMAIL_LOG_OFF') && FLUENTMAIL_LOG_OFF) {
@@ -352,7 +352,9 @@ class BaseHandler
         $mail_error_data['errors'] = $data['errors'];
 
         $error = new \WP_Error(
-            $code, $data['message'], $mail_error_data
+            $code,
+            $data['message'],
+            $mail_error_data
         );
 
         $this->app->doAction('wp_mail_failed', $error);
@@ -406,5 +408,4 @@ class BaseHandler
     {
         return new \WP_Error('not_implemented', 'Not implemented');
     }
-
 }

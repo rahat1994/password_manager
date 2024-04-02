@@ -2,14 +2,13 @@
 
 namespace FluentMail\App\Services\Mailer\Providers\Simulator;
 
-use FluentMail\App\Models\Logger;
 use FluentMail\App\Services\Mailer\BaseHandler;
 
 class Handler extends BaseHandler
 {
     public function send()
     {
-        if($this->shouldBeLogged(true)) {
+        if ($this->shouldBeLogged(true)) {
             $this->setAttributes();
             $logData = [
                 'to' => maybe_serialize($this->setRecipientsArray($this->phpMailer->getToAddresses())),

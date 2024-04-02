@@ -2,8 +2,6 @@
 
 namespace FluentMail\App\Services\Mailer;
 
-use FluentMail\App\Models\Logger;
-use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Support\Arr;
 use FluentMail\Includes\Core\Application;
 use FluentMail\Includes\Support\ValidationException;
@@ -16,9 +14,9 @@ class Manager
     protected static $config = [];
 
     protected static $settings = [];
-    
+
     protected static $resolved = [];
-    
+
     protected static $wpConfigSettings = [];
 
     public function __construct(Application $app = null)
@@ -39,7 +37,7 @@ class Manager
     {
         static::$config = require(__DIR__ . '/Providers/config.php');
 
-        static::$settings = (new Settings)->getSettings();
+        // static::$settings = (new Settings)->getSettings();
 
         $this->mergeConfigAndSettings();
     }
@@ -53,7 +51,8 @@ class Manager
 
         if (isset($databaseSettings['misc'])) {
             Arr::set(static::$config, "misc", array_merge(
-                static::$config['misc'], $databaseSettings['misc']
+                static::$config['misc'],
+                $databaseSettings['misc']
             ));
         }
 
@@ -65,9 +64,8 @@ class Manager
                     $provider['options'],
                     Arr::get($databaseSettings, $optionKey, [])
                 );
-                
-                Arr::set(static::$config, $optionKey, $options);
 
+                Arr::set(static::$config, $optionKey, $options);
             } catch (ValidationException $e) {
                 continue;
             }
@@ -92,7 +90,9 @@ class Manager
     public function getWPConfig($key = null, $default = null)
     {
         return $key ? Arr::get(
-            static::$wpConfigSettings, $key, $default
+            static::$wpConfigSettings,
+            $key,
+            $default
         ) : static::$wpConfigSettings;
     }
 

@@ -2,7 +2,6 @@
 
 namespace FluentMail\App\Services\Mailer\Providers\AmazonSes;
 
-use FluentMail\App\Models\Settings;
 use FluentMail\App\Services\Mailer\BaseHandler;
 use FluentMail\Includes\Support\Arr;
 
@@ -342,7 +341,6 @@ class Handler extends BaseHandler
             }
 
             $mapSenders = array_keys($mapSenders);
-
         } else {
             $mapSenders = $validSenders['emails'];
         }

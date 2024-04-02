@@ -2,7 +2,6 @@
 
 namespace FluentMail\App\Services\Mailer;
 
-use FluentMail\App\Models\Settings;
 use FluentMail\Includes\Support\Arr;
 use FluentMail\Includes\Support\ValidationException;
 
@@ -33,7 +32,10 @@ trait ValidatorTrait
     public function throwValidationException($errors)
     {
         throw new ValidationException(
-            'Unprocessable Entity', 422, null, $errors
+            'Unprocessable Entity',
+            422,
+            null,
+            $errors
         );
     }
 }
