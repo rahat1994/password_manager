@@ -288,10 +288,14 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 this.fetchItems();
             },
             folderSelected(folder){
-                console.log(folder);
                 this.pagination.currentPage = 1;
-                this.filter.folderId = folder.id
-                this.selectedFolder = folder;
+                if (this.filter.folderId === folder.id){
+                    this.filter.folderId = null;
+                    this.selectedFolder = null;                    
+                } else {
+                    this.filter.folderId = folder.id
+                    this.selectedFolder = folder;
+                }
                 this.renderNewPage();
             },
             handleItemCreationDialogClosed(closeItemCreationDialog){

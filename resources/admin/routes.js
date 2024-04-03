@@ -7,6 +7,7 @@ import Support from './Modules/Misc/Support';
 import Docs from './Modules/Misc/Docs';
 import NotificationSettings from './Modules/NotificationSettings/NotificationSettings.vue';
 import Vault from './Modules/Vault/Vault.vue';
+import Tools from './Modules/Tools/Tools.vue';
 export default [
     {
         name: 'Vault',
@@ -15,5 +16,13 @@ export default [
             title: 'Vault',
         },
         component: Vault,
+    },
+    {
+        name: 'Tools',
+        path: '/tools',
+        meta: {
+            title: 'Tools',
+        },
+        component: Tools,
     }
 ];
