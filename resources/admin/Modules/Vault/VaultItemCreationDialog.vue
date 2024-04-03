@@ -220,6 +220,7 @@ export default {
                     };
                     this.$emit('on-item-creation-dialog-closed', {closeItemCreationDialog: true, refreshItems: true});
                 }).fail(res => {
+                    console.log(res);
                     if (Number(res.status) === 504) {
                         return this.$notify.error({
                             title: 'Oops!',
@@ -232,7 +233,7 @@ export default {
                         return this.$notify.error({
                             title: 'Oops!',
                             offset: 19,
-                            message: res.data.message
+                            message: responseJSON.data.message
                         });
                     }
                 }).always(() => {
@@ -275,7 +276,7 @@ export default {
                     return this.$notify.error({
                         title: 'Oops!',
                         offset: 19,
-                        message: res.data.message
+                        message: responseJSON.data.message
                     });
                 }
             }).always(() => {

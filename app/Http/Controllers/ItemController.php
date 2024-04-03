@@ -83,7 +83,7 @@ class ItemController extends Controller
     {
         $this->verify();
 
-        $item_id = (array) $request->get('item_id');
+        $item_id = (array) $request->get('itemId');
 
         $item->delete($item_id);
 

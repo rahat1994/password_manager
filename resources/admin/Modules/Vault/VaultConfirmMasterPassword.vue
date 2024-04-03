@@ -99,11 +99,11 @@ export default {
             });
         },
         onDialogClosed() {
+            this.password = "";
             this.$emit('on-master-pass-confirmation-dialog-closed', { closeFolderCreationDialog: true });
         }
     },
     created:()=>{
-        console.log(this.itemId);
     }
 }
 </script>
