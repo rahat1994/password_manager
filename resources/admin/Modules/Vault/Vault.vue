@@ -77,7 +77,7 @@
                                         <el-dropdown-item command="copy_password" @click="copyPassword()"
                                             icon="el-icon-document-copy dropdown_item">{{ $t("Copy Password")
                                             }}</el-dropdown-item>
-                                        <el-dropdown-item divided command="delete_item"
+                                        <el-dropdown-item divided command="delete_item" @click="deleteItems(scope.row.id)"
                                             icon="el-icon-delete dropdown_item danger">
                                             <span class="danger"> {{ $t("Delete") }}</span>
                                         </el-dropdown-item>
@@ -91,7 +91,7 @@
 
                 <div class="pagination_element_wrapper">
                     <el-pagination background @current-change="changeCurrentPage" :current-page="pagination.currentPage"
-                        :page-size="pagination.perPage" layout="total, prev, pager, next, jumper"
+                        :page-size="pagination.perPage" layout="total, prev, pager, next"
                         :total="pagination.total">
                     </el-pagination>
                 </div>
@@ -105,7 +105,7 @@
 
         <VaultBulkFolderUpdateDialog :isVisible="isBulkFolderUpdateDialogVisible" :folders="folders"
             :selectedItems="selectedVaultItems"
-            @on-folder-update-dialog-closed="this.isBulkFolderUpdateDialogVisible = false; fetchItems()" />
+            @on-folder-update-dialog-closed="handleBulkUpdateDialogClosed" />
 
         <VaultConfirmMasterPassword :isVisible="isPasswordConfirmationDialogVisible" :itemId="itemEditingDialogData.id" 
          @on-master-pass-confirmation-dialog-closed="handleMasterPasswordConfirmed" />
@@ -178,6 +178,13 @@ import VaultBulkActions from "./VaultBulkActions.vue";
             handleItemDropDownCommand(command){
                 console.log(this.currentItem);
                 console.log(command);
+                if(command === 'copy_username'){
+                    this.copyUserName();
+                } else if(command === 'copy_password'){
+                    this.copyPassword();
+                } else if(command === 'delete_item'){
+                    this.deleteItems(this.currentItem.id);
+                }
             },
             copyUserName() {
                 console.log("Copy Username");
@@ -216,7 +223,40 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 console.log(action);
                 if (action === 'moveselected') {
                     this.isBulkFolderUpdateDialogVisible = true;
+                } else if (action === 'deleteselected') {
+                    console.log('Delete Selected');
+                    const ifDelete = confirm(('Are you sure you want to delete selected items?'));
+                    console.log(ifDelete);
+                    if(ifDelete){
+                        this.deleteItems();
+                    } else{
+                        return;
+                    }
                 }
+            },
+            deleteItems(itemId){
+
+                var data = {};
+                console.log("Item deletion process");
+                console.log(itemId);
+                if(itemId === null || itemId === undefined){
+                    data = {
+                        itemId: this.selectedVaultItems.map(item => item.id)
+                    };
+                } else {
+                    data = {
+                        itemId: [itemId]
+                    };
+                }
+
+                this.loadingFolders = true;
+                this.$post('item/delete', data).then(res => {
+                    console.log(res.data);
+                }).fail(error => {
+                    console.log(error);
+                }).always(() => {
+                    this.fetchItems();
+                });
             },
             fetchFolders(){
                 const data = {};
@@ -300,6 +340,13 @@ import VaultBulkActions from "./VaultBulkActions.vue";
             },
             handleItemCreationDialogClosed(closeItemCreationDialog){
                 this.isItemEditingDialogVisible = false;
+            },
+            handleBulkUpdateDialogClosed(closeBulkUpdateDialog){
+                console.log(closeBulkUpdateDialog);
+                this.isBulkFolderUpdateDialogVisible = false;
+                if (closeBulkUpdateDialog.fetchItems) {
+                    this.fetchItems();
+                }
             },
             editItem(item){
                 this.itemEditingDialogData = item

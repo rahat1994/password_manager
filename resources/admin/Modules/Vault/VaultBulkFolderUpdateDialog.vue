@@ -68,7 +68,7 @@ export default {
                     offset: 19,
                     message: res.data.message
                 });
-                this.$emit('on-folder-creation-dialog-closed', { closeFolderCreationDialog: true, fetchFolders: true });
+                this.$emit('on-folder-update-dialog-closed', { closeBulkFolderUpdateDialog: true, fetchItems: true });
             }).fail(res => {
                 if (Number(res.status) === 504) {
                     return this.$notify.error({
@@ -90,7 +90,8 @@ export default {
             });
         },
         onFolderUpdateDialogClosed() {
-            this.$emit('on-folder-update-dialog-closed', { closeFolderCreationDialog: true });
+            console.log('onFolderUpdateDialogClosed');
+            this.$emit('on-folder-update-dialog-closed', { closeBulkFolderUpdateDialog: true });
         }
     }
 }

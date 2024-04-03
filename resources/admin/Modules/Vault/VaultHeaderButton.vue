@@ -9,21 +9,20 @@
                 title="Create"
                 :visible.sync="isGeneralDialogVisible"
                 width="50%"
-                :close-on-click-modal="false"
             >
             <span>
                 <el-row>
-                    <el-col :sm="12" :lg="8">
-                        <el-result icon="info" title="Create a new Item" subTitle="Create an Item">
+                    <el-col :sm="12" :lg="12">
+                        <el-result icon="info" title="Create a new Item" subTitle="Create a new Item">
                         <template slot="extra">
                             <el-button @click="isItemCreationDialogVisible = true" type="primary" icon="el-icon-plus">Item</el-button>
                         </template>
                         </el-result>
                     </el-col>
-                    <el-col :sm="12" :lg="8">
+                    <el-col :sm="12" :lg="12">
                         <el-result icon="info" title="Create Folder " subTitle="Create a new folder.">
                         <template slot="extra">
-                            <el-button @click="isFolderCreationDialogVisible = true" type="primary" icon="el-icon-plus.">Folder</el-button>
+                            <el-button @click="isFolderCreationDialogVisible = true" type="primary" icon="el-icon-plus">Folder</el-button>
                         </template>
                         </el-result>
                     </el-col>
