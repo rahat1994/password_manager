@@ -67,14 +67,14 @@
                         <template slot-scope="scope">
                             <el-dropdown trigger="click" @command="handleItemDropDownCommand">
                                 <span class="el-dropdown-link">
-                                    <i class="el-icon-more" @click="handleDelete(scope.$index, scope.row)"></i>
+                                    <i class="el-icon-more"></i>
                                 </span>
                                 <template>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item command="copy_username" @click="copyUserName()"
+                                        <el-dropdown-item command="copy_username" class="copy_username" :data-username="scope.row.username" @click.native="copyUserName(scope.$index, scope.row)"
                                             icon="el-icon-document-copy dropdown_item">{{ $t("Copy Username")
                                             }}</el-dropdown-item>
-                                        <el-dropdown-item command="copy_password" @click="copyPassword()"
+                                        <el-dropdown-item command="copy_password" @click.native="copyPassword(scope.$index, scope.row)"
                                             icon="el-icon-document-copy dropdown_item">{{ $t("Copy Password")
                                             }}</el-dropdown-item>
                                         <el-dropdown-item divided command="delete_item" @click="deleteItems(scope.row.id)"
@@ -114,11 +114,13 @@
 </template>
 <script type="text/babel">
     import { Loading } from "element-ui";
-import VaultBulkActions from "./VaultBulkActions.vue";
+    import VaultBulkActions from "./VaultBulkActions.vue";
     import VaultHeaderButton from "./VaultHeaderButton.vue";
     import VaultItemCreationDialog from "./VaultItemCreationDialog.vue";
     import VaultBulkFolderUpdateDialog from "./VaultBulkFolderUpdateDialog.vue";
     import VaultConfirmMasterPassword from "./VaultConfirmMasterPassword.vue";
+    import ClipboardJS from 'clipboard';
+
     export default {
         name: 'Vault',
         components: {
@@ -179,17 +181,19 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                 console.log(this.currentItem);
                 console.log(command);
                 if(command === 'copy_username'){
-                    this.copyUserName();
+                    // this.copyUserName();
                 } else if(command === 'copy_password'){
-                    this.copyPassword();
+                    // this.copyPassword();
                 } else if(command === 'delete_item'){
                     this.deleteItems(this.currentItem.id);
                 }
             },
-            copyUserName() {
-                console.log("Copy Username");
+            copyUserName(index, row) {
+                console.log(row);
+                console.log("Copy my usernae");
             },
-            copyPassword() {
+            copyPassword(index, row) {
+                console.log(row);
                 console.log("Copy Password");
             },
             handleOpen(key, keyPath) {
@@ -311,7 +315,7 @@ import VaultBulkActions from "./VaultBulkActions.vue";
                     password: item.password,
                     folder: item.folder_id,
                     organisation: {
-                        name: "Staff Asia",
+                        name: "Default",
                         id: 1
                     },
                     itemType: 'login',
@@ -437,6 +441,19 @@ import VaultBulkActions from "./VaultBulkActions.vue";
             this.fetchFolders();
             this.fetchItems();
             
+        },
+        mounted() {
+            // this.$nextTick(() => {
+            //     this.renderNewPage();
+            // });
+            var vueInstance = this;
+            new ClipboardJS('.copy_username', {
+                text: function(trigger) {
+                    console.log(trigger);
+                    vueInstance.isPasswordConfirmationDialogVisible = true;
+                    return trigger.getAttribute('data-username');
+                }
+            });
         }
     };
 </script>

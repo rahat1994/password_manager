@@ -4539,6 +4539,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _VaultItemCreationDialog_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./VaultItemCreationDialog.vue */ "./resources/admin/Modules/Vault/VaultItemCreationDialog.vue");
 /* harmony import */ var _VaultBulkFolderUpdateDialog_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./VaultBulkFolderUpdateDialog.vue */ "./resources/admin/Modules/Vault/VaultBulkFolderUpdateDialog.vue");
 /* harmony import */ var _VaultConfirmMasterPassword_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./VaultConfirmMasterPassword.vue */ "./resources/admin/Modules/Vault/VaultConfirmMasterPassword.vue");
+/* harmony import */ var clipboard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! clipboard */ "./node_modules/clipboard/dist/clipboard.js");
+/* harmony import */ var clipboard__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(clipboard__WEBPACK_IMPORTED_MODULE_6__);
+
 
 
 
@@ -4601,17 +4604,19 @@ __webpack_require__.r(__webpack_exports__);
       console.log(this.currentItem);
       console.log(command);
       if (command === 'copy_username') {
-        this.copyUserName();
+        // this.copyUserName();
       } else if (command === 'copy_password') {
-        this.copyPassword();
+        // this.copyPassword();
       } else if (command === 'delete_item') {
         this.deleteItems(this.currentItem.id);
       }
     },
-    copyUserName: function copyUserName() {
-      console.log("Copy Username");
+    copyUserName: function copyUserName(index, row) {
+      console.log(row);
+      console.log("Copy my usernae");
     },
-    copyPassword: function copyPassword() {
+    copyPassword: function copyPassword(index, row) {
+      console.log(row);
       console.log("Copy Password");
     },
     handleOpen: function handleOpen(key, keyPath) {
@@ -4735,7 +4740,7 @@ __webpack_require__.r(__webpack_exports__);
         password: item.password,
         folder: item.folder_id,
         organisation: {
-          name: "Staff Asia",
+          name: "Default",
           id: 1
         },
         itemType: 'login',
@@ -4848,6 +4853,19 @@ __webpack_require__.r(__webpack_exports__);
     this.logAlertInfo = JSON.parse(window.localStorage.getItem('log-settings'));
     this.fetchFolders();
     this.fetchItems();
+  },
+  mounted: function mounted() {
+    // this.$nextTick(() => {
+    //     this.renderNewPage();
+    // });
+    var vueInstance = this;
+    new (clipboard__WEBPACK_IMPORTED_MODULE_6___default())('.copy_username', {
+      text: function text(trigger) {
+        console.log(trigger);
+        vueInstance.isPasswordConfirmationDialogVisible = true;
+        return trigger.getAttribute('data-username');
+      }
+    });
   }
 });
 
@@ -10987,25 +11005,22 @@ var render = function render() {
         }, [_c("span", {
           staticClass: "el-dropdown-link"
         }, [_c("i", {
-          staticClass: "el-icon-more",
-          on: {
-            click: function click($event) {
-              return _vm.handleDelete(scope.$index, scope.row);
-            }
-          }
+          staticClass: "el-icon-more"
         })]), _vm._v(" "), [_c("el-dropdown-menu", {
           attrs: {
             slot: "dropdown"
           },
           slot: "dropdown"
         }, [_c("el-dropdown-item", {
+          staticClass: "copy_username",
           attrs: {
             command: "copy_username",
+            "data-username": scope.row.username,
             icon: "el-icon-document-copy dropdown_item"
           },
-          on: {
+          nativeOn: {
             click: function click($event) {
-              return _vm.copyUserName();
+              return _vm.copyUserName(scope.$index, scope.row);
             }
           }
         }, [_vm._v(_vm._s(_vm.$t("Copy Username")))]), _vm._v(" "), _c("el-dropdown-item", {
@@ -11013,9 +11028,9 @@ var render = function render() {
             command: "copy_password",
             icon: "el-icon-document-copy dropdown_item"
           },
-          on: {
+          nativeOn: {
             click: function click($event) {
-              return _vm.copyPassword();
+              return _vm.copyPassword(scope.$index, scope.row);
             }
           }
         }, [_vm._v(_vm._s(_vm.$t("Copy Password")))]), _vm._v(" "), _c("el-dropdown-item", {
@@ -11033,7 +11048,7 @@ var render = function render() {
           staticClass: "danger"
         }, [_vm._v(" " + _vm._s(_vm.$t("Delete")))])])], 1)]], 2)];
       }
-    }], null, false, 1631093599)
+    }], null, false, 4034426644)
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "pagination_element_wrapper"
   }, [_c("el-pagination", {
