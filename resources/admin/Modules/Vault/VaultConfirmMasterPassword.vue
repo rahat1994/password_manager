@@ -96,6 +96,7 @@ export default {
                 }
             }).always(() => {
                 this.loading = false;
+                this.password = "";
             });
         },
         onDialogClosed() {

@@ -52,10 +52,9 @@
                     <el-col :span="12">
 
                         <el-form-item prop="password">
-                            <el-input size="small" v-model="form.password" :show-password="true"
+                            <el-input size="small" id="item_dialog_pass" v-model="form.password" :show-password="true"
                                 :placeholder="$t('password')">
-                                <el-button style="width: 3rem;" slot="append" icon="el-icon-document-copy"
-                                    @click="()=>{}" />
+                                <el-button id="item_dialog_pass_copy" style="width: 3rem;" slot="append" icon="el-icon-document-copy" />
                             </el-input>
                         </el-form-item>
 
@@ -285,25 +284,14 @@ export default {
         },
 
     }, 
-    created: function(){
-        var itemUsernameCopyButton = new ClipboardJS('.copy_item_username', {
+    mounted: function(){       
+        new ClipboardJS('.copy_item_username');
+        new ClipboardJS('#item_dialog_pass_copy', {
             text: function(trigger) {
-
                 console.log(trigger);
-                return "This is a copy text";
-            }        
+                return document.getElementById('item_dialog_pass').value;
+            }
         });
-        
-        itemUsernameCopyButton.on('success', function(e) {
-            // e.clearSelection();
-            // this.$notify.success({
-            //     title: 'Great!',
-            //     offset: 19,
-            //     message: 'Username copied to clipboard'
-            // });
-        });
-        console.log(this.form);
-        console.log(this.context);
     }
 }
 </script>
