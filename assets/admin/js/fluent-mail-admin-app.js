@@ -4602,14 +4602,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     handleItemDropDownCommand: function handleItemDropDownCommand(command) {
-      console.log(this.currentItem);
-      console.log(command);
       if (command === 'copy_username') {
         // this.copyUserName();
       } else if (command === 'copy_password') {
         // this.copyPassword();
       } else if (command === 'delete_item') {
-        this.deleteItems(this.currentItem.id);
+        // this.deleteItems(this.currentItem.id);
       }
     },
     copyUserName: function copyUserName(index, row) {
@@ -11122,7 +11120,7 @@ var render = function render() {
             command: "delete_item",
             icon: "el-icon-delete dropdown_item danger"
           },
-          on: {
+          nativeOn: {
             click: function click($event) {
               return _vm.deleteItems(scope.row.id);
             }
@@ -11131,7 +11129,7 @@ var render = function render() {
           staticClass: "danger"
         }, [_vm._v(" " + _vm._s(_vm.$t("Delete")))])])], 1)]], 2)];
       }
-    }], null, false, 4034426644)
+    }], null, false, 1278146325)
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "pagination_element_wrapper"
   }, [_c("el-pagination", {

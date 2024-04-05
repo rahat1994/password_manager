@@ -77,7 +77,7 @@
                                         <el-dropdown-item command="copy_password" @click.native="copyPassword(scope.$index, scope.row)"
                                             icon="el-icon-document-copy dropdown_item">{{ $t("Copy Password")
                                             }}</el-dropdown-item>
-                                        <el-dropdown-item divided command="delete_item" @click="deleteItems(scope.row.id)"
+                                        <el-dropdown-item divided command="delete_item" @click.native="deleteItems(scope.row.id)"
                                             icon="el-icon-delete dropdown_item danger">
                                             <span class="danger"> {{ $t("Delete") }}</span>
                                         </el-dropdown-item>
@@ -179,14 +179,12 @@
         },
         methods: {
             handleItemDropDownCommand(command){
-                console.log(this.currentItem);
-                console.log(command);
                 if(command === 'copy_username'){
                     // this.copyUserName();
                 } else if(command === 'copy_password'){
                     // this.copyPassword();
                 } else if(command === 'delete_item'){
-                    this.deleteItems(this.currentItem.id);
+                    // this.deleteItems(this.currentItem.id);
                 }
             },
             copyUserName(index, row) {
