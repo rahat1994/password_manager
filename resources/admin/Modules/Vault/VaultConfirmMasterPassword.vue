@@ -79,6 +79,7 @@ export default {
                                 offset: 19,
                                 message: res.data.message
                             });
+                            this.form.password = "";
                             this.$emit('on-master-pass-confirmation-dialog-closed', { success: res.success, item: res.data, context:this.context});
                         } else {
                             this.$notify.error({
@@ -110,7 +111,7 @@ export default {
         },
         onDialogClosed() {
             this.password = "";
-            this.$emit('on-master-pass-confirmation-dialog-closed', { closeFolderCreationDialog: true });
+            this.$emit('on-master-pass-confirmation-dialog-closed', { success: null, item: null, context:this.context});
         }
     },
     created:()=>{

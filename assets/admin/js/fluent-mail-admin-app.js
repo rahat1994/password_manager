@@ -4825,6 +4825,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     handleItemCreationDialogClosed: function handleItemCreationDialogClosed(closeItemCreationDialog) {
       this.isItemEditingDialogVisible = false;
+      this.renderNewPage();
     },
     handleBulkUpdateDialogClosed: function handleBulkUpdateDialogClosed(closeBulkUpdateDialog) {
       console.log(closeBulkUpdateDialog);
@@ -4851,9 +4852,10 @@ __webpack_require__.r(__webpack_exports__);
         item = data.item,
         context = data.context;
       // this.isPasswordConfirmationDialogVisible = false;
-      console.log(data);
-      console.log(success);
-      console.log(item);
+      if (success === null) {
+        this.isPasswordConfirmationDialogVisible = false;
+        return;
+      }
       if (success && context !== 'copy_password') {
         //  format item first and then assign it to itemEditingDialogData
         this.itemEditingDialogData = this.formatItem(item);
@@ -5169,6 +5171,7 @@ __webpack_require__.r(__webpack_exports__);
             offset: 19,
             message: res.data.message
           });
+          _this2.form.password = "";
           _this2.$emit('on-master-pass-confirmation-dialog-closed', {
             success: res.success,
             item: res.data,
@@ -5204,7 +5207,9 @@ __webpack_require__.r(__webpack_exports__);
     onDialogClosed: function onDialogClosed() {
       this.password = "";
       this.$emit('on-master-pass-confirmation-dialog-closed', {
-        closeFolderCreationDialog: true
+        success: null,
+        item: null,
+        context: this.context
       });
     }
   },
@@ -11693,17 +11698,20 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("el-option", {
     attrs: {
-      label: "Card",
+      disabled: "",
+      label: "Card (coming-soon)",
       value: "card"
     }
   }), _vm._v(" "), _c("el-option", {
     attrs: {
-      label: "Identity",
+      disabled: "",
+      label: "Identity (coming-soon)",
       value: "identity"
     }
   }), _vm._v(" "), _c("el-option", {
     attrs: {
-      label: "Secure note",
+      disabled: "",
+      label: "Secure note (coming-soon)",
       value: "secure_note"
     }
   })], 1)], 1)], 1), _vm._v(" "), _c("el-form-item", {

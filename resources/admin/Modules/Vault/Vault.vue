@@ -384,6 +384,7 @@
             },
             handleItemCreationDialogClosed(closeItemCreationDialog){
                 this.isItemEditingDialogVisible = false;
+                this.renderNewPage();
             },
             handleBulkUpdateDialogClosed(closeBulkUpdateDialog){
                 console.log(closeBulkUpdateDialog);
@@ -409,9 +410,10 @@
             handleMasterPasswordConfirmed(data){
                 const { success, item, context } = data;
                 // this.isPasswordConfirmationDialogVisible = false;
-                console.log(data);
-                console.log(success);
-                console.log(item);
+                if(success === null){
+                    this.isPasswordConfirmationDialogVisible = false;
+                    return;
+                }
                 if (success && context !== 'copy_password') {
 
                     //  format item first and then assign it to itemEditingDialogData

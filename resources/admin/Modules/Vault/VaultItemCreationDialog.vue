@@ -10,9 +10,9 @@
                     <el-col :span="24">
                         <el-select v-model="form.itemType">
                             <el-option label="Login" value="login"></el-option>
-                            <el-option label="Card" value="card"></el-option>
-                            <el-option label="Identity" value="identity"></el-option>
-                            <el-option label="Secure note" value="secure_note"></el-option>
+                            <el-option disabled label="Card (coming-soon)" value="card"></el-option>
+                            <el-option disabled label="Identity (coming-soon)" value="identity"></el-option>
+                            <el-option disabled label="Secure note (coming-soon)" value="secure_note"></el-option>
                         </el-select>
                     </el-col>
 
