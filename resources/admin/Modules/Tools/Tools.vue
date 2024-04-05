@@ -33,7 +33,7 @@
 
                 <el-form-item>
                     <el-button type="primary" @click="regeneratePassword">Regenerate Password</el-button>
-                    <el-button>Cancel</el-button>
+
                 </el-form-item>
             </el-form>
         </div>
@@ -60,6 +60,20 @@
         },
         methods:{
             regeneratePassword(){
+
+                if (this.form.length < 1) {
+                    this.form.length = 10;
+                }
+                if(this.form.minimumNumbers < 1){
+                    this.form.minimumNumbers = 1;
+                }
+                if(this.form.minimumSpecials < 1){
+                    this.form.minimumSpecials = 1;
+                }
+                if(this.form.length < this.form.minimumNumbers + this.form.minimumSpecials){
+                    this.form.minimumNumbers = 1;
+                    this.form.minimumSpecials = 1;
+                }
 
                 let charset = "abcdefghijklmnopqrstuvwxyz";
                 if (this.form.useUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -183,6 +183,7 @@ class AdminMenuHandler
 
     public function maybeAdminNotice()
     {
+        return;
         if (!current_user_can('manage_options')) {
             return;
         }

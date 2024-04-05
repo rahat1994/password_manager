@@ -4467,6 +4467,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     regeneratePassword: function regeneratePassword() {
+      if (this.form.length < 1) {
+        this.form.length = 10;
+      }
+      if (this.form.minimumNumbers < 1) {
+        this.form.minimumNumbers = 1;
+      }
+      if (this.form.minimumSpecials < 1) {
+        this.form.minimumSpecials = 1;
+      }
+      if (this.form.length < this.form.minimumNumbers + this.form.minimumSpecials) {
+        this.form.minimumNumbers = 1;
+        this.form.minimumSpecials = 1;
+      }
       var charset = "abcdefghijklmnopqrstuvwxyz";
       if (this.form.useUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       var numbers = "0123456789";
@@ -10861,7 +10874,7 @@ var render = function render() {
     on: {
       click: _vm.regeneratePassword
     }
-  }, [_vm._v("Regenerate Password")]), _vm._v(" "), _c("el-button", [_vm._v("Cancel")])], 1)], 1)], 1)]) : _vm._e();
+  }, [_vm._v("Regenerate Password")])], 1)], 1)], 1)]) : _vm._e();
 };
 var staticRenderFns = [];
 render._withStripped = true;
