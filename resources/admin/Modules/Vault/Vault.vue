@@ -108,7 +108,7 @@
             @on-folder-update-dialog-closed="handleBulkUpdateDialogClosed" />
 
         <VaultConfirmMasterPassword :isVisible="isPasswordConfirmationDialogVisible" :itemId="itemEditingDialogData.id" 
-         @on-master-pass-confirmation-dialog-closed="handleMasterPasswordConfirmed" />
+         @on-master-pass-confirmation-dialog-closed="handleMasterPasswordConfirmed" :context="this.passwordConfirmationContext"/>
     </div>
     <el-skeleton :animated="true" v-else class="fss_content" :rows="15"></el-skeleton>
 </template>
@@ -142,6 +142,7 @@
                 isBulkFolderUpdateDialogVisible: false,
                 isPasswordConfirmationDialogVisible: false,
                 itemEditingDialogData: {},
+                passwordConfirmationContext: null,
                 page: 1,
                 loading:false,
                 loadingFolders:false,
@@ -189,12 +190,53 @@
                 }
             },
             copyUserName(index, row) {
-                console.log(row);
-                console.log("Copy my usernae");
+                // Create a temporary button element
+                const tempButton = document.createElement('button');
+                tempButton.style.display = 'none'; // Hide the button
+                document.body.appendChild(tempButton); // Append the button to the body
+
+                // Create a new ClipboardJS instance
+                const clipboard = new ClipboardJS(tempButton, {
+                    text: () => row.username // Replace 'username' with the actual property name if it's different
+                });
+
+                // Trigger a click on the temporary button
+                tempButton.click();
+
+                // Remove the temporary button and destroy the ClipboardJS instance
+                document.body.removeChild(tempButton);
+                clipboard.destroy();
+
+                this.$notify.success({
+                    title: 'Great!',
+                    offset: 19,
+                    message: "Username copied to clipboard!"
+                });
             },
             copyPassword(index, row) {
-                console.log(row);
-                console.log("Copy Password");
+
+                if (row.masterPassProtected) {
+                    this.isPasswordConfirmationDialogVisible = true;
+                    this.passwordConfirmationContext = 'copy_password';
+                    this.currentItem = row;
+                    return;
+                }
+                // Create a temporary button element
+                const tempButton = document.createElement('button');
+                tempButton.style.display = 'none'; // Hide the button
+                document.body.appendChild(tempButton); // Append the button to the body
+
+                // Create a new ClipboardJS instance
+                const clipboard = new ClipboardJS(tempButton, {
+                    text: () => row.password // Replace 'password' with the actual property name if it's different
+                });
+
+                // Trigger a click on the temporary button
+                tempButton.click();
+
+                // Remove the temporary button and destroy the ClipboardJS instance
+                document.body.removeChild(tempButton);
+                clipboard.destroy();
             },
             handleOpen(key, keyPath) {
                 this.message = "Hello there";
@@ -367,16 +409,40 @@
                 this.isPasswordConfirmationDialogVisible = false;
             },
             handleMasterPasswordConfirmed(data){
-                const { success, item } = data;
+                const { success, item, context } = data;
                 // this.isPasswordConfirmationDialogVisible = false;
                 console.log(data);
                 console.log(success);
                 console.log(item);
-                if (success) {
+                if (success && context !== 'copy_password') {
 
                     //  format item first and then assign it to itemEditingDialogData
                     this.itemEditingDialogData = this.formatItem(item);
                     this.isItemEditingDialogVisible = true;
+                } else{
+                    var currentItem = this.formatItem(item);
+                    // Create a temporary button element
+                    const tempButton = document.createElement('button');
+                    tempButton.style.display = 'none'; // Hide the button
+                    document.body.appendChild(tempButton); // Append the button to the body
+
+                    // Create a new ClipboardJS instance
+                    const clipboard = new ClipboardJS(tempButton, {
+                        text: () => currentItem.password // Replace 'password' with the actual property name if it's different
+                    });
+
+                    // Trigger a click on the temporary button
+                    tempButton.click();
+
+                    // Remove the temporary button and destroy the ClipboardJS instance
+                    document.body.removeChild(tempButton);
+                    clipboard.destroy();
+
+                    this.$notify.success({
+                        title: 'Great!',
+                        offset: 19,
+                        message: "Password copied to clipboard!"
+                    });
                 }
                 this.handlePasswordConfirmationDialogClosed();
             }

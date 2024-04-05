@@ -4569,6 +4569,7 @@ __webpack_require__.r(__webpack_exports__);
       isBulkFolderUpdateDialogVisible: false,
       isPasswordConfirmationDialogVisible: false,
       itemEditingDialogData: {},
+      passwordConfirmationContext: null,
       page: 1,
       loading: false,
       loadingFolders: false,
@@ -4612,12 +4613,55 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     copyUserName: function copyUserName(index, row) {
-      console.log(row);
-      console.log("Copy my usernae");
+      // Create a temporary button element
+      var tempButton = document.createElement('button');
+      tempButton.style.display = 'none'; // Hide the button
+      document.body.appendChild(tempButton); // Append the button to the body
+
+      // Create a new ClipboardJS instance
+      var clipboard = new (clipboard__WEBPACK_IMPORTED_MODULE_6___default())(tempButton, {
+        text: function text() {
+          return row.username;
+        } // Replace 'username' with the actual property name if it's different
+      });
+
+      // Trigger a click on the temporary button
+      tempButton.click();
+
+      // Remove the temporary button and destroy the ClipboardJS instance
+      document.body.removeChild(tempButton);
+      clipboard.destroy();
+      this.$notify.success({
+        title: 'Great!',
+        offset: 19,
+        message: "Username copied to clipboard!"
+      });
     },
     copyPassword: function copyPassword(index, row) {
-      console.log(row);
-      console.log("Copy Password");
+      if (row.masterPassProtected) {
+        this.isPasswordConfirmationDialogVisible = true;
+        this.passwordConfirmationContext = 'copy_password';
+        this.currentItem = row;
+        return;
+      }
+      // Create a temporary button element
+      var tempButton = document.createElement('button');
+      tempButton.style.display = 'none'; // Hide the button
+      document.body.appendChild(tempButton); // Append the button to the body
+
+      // Create a new ClipboardJS instance
+      var clipboard = new (clipboard__WEBPACK_IMPORTED_MODULE_6___default())(tempButton, {
+        text: function text() {
+          return row.password;
+        } // Replace 'password' with the actual property name if it's different
+      });
+
+      // Trigger a click on the temporary button
+      tempButton.click();
+
+      // Remove the temporary button and destroy the ClipboardJS instance
+      document.body.removeChild(tempButton);
+      clipboard.destroy();
     },
     handleOpen: function handleOpen(key, keyPath) {
       this.message = "Hello there";
@@ -4793,15 +4837,41 @@ __webpack_require__.r(__webpack_exports__);
     },
     handleMasterPasswordConfirmed: function handleMasterPasswordConfirmed(data) {
       var success = data.success,
-        item = data.item;
+        item = data.item,
+        context = data.context;
       // this.isPasswordConfirmationDialogVisible = false;
       console.log(data);
       console.log(success);
       console.log(item);
-      if (success) {
+      if (success && context !== 'copy_password') {
         //  format item first and then assign it to itemEditingDialogData
         this.itemEditingDialogData = this.formatItem(item);
         this.isItemEditingDialogVisible = true;
+      } else {
+        var currentItem = this.formatItem(item);
+        // Create a temporary button element
+        var tempButton = document.createElement('button');
+        tempButton.style.display = 'none'; // Hide the button
+        document.body.appendChild(tempButton); // Append the button to the body
+
+        // Create a new ClipboardJS instance
+        var clipboard = new (clipboard__WEBPACK_IMPORTED_MODULE_6___default())(tempButton, {
+          text: function text() {
+            return currentItem.password;
+          } // Replace 'password' with the actual property name if it's different
+        });
+
+        // Trigger a click on the temporary button
+        tempButton.click();
+
+        // Remove the temporary button and destroy the ClipboardJS instance
+        document.body.removeChild(tempButton);
+        clipboard.destroy();
+        this.$notify.success({
+          title: 'Great!',
+          offset: 19,
+          message: "Password copied to clipboard!"
+        });
       }
       this.handlePasswordConfirmationDialogClosed();
     }
@@ -5030,7 +5100,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'VaultConfirmMasterPassword',
-  props: ['isVisible', 'itemId'],
+  props: {
+    isVisible: {
+      type: Boolean,
+      "default": false
+    },
+    itemId: {
+      "default": null
+    },
+    context: {
+      type: String,
+      "default": 'edit_item'
+    }
+  },
   data: function data() {
     return {
       loading: false,
@@ -5078,7 +5160,8 @@ __webpack_require__.r(__webpack_exports__);
           });
           _this2.$emit('on-master-pass-confirmation-dialog-closed', {
             success: res.success,
-            item: res.data
+            item: res.data,
+            context: _this2.context
           });
         } else {
           _this2.$notify.error({
@@ -11085,7 +11168,8 @@ var render = function render() {
   }), _vm._v(" "), _c("VaultConfirmMasterPassword", {
     attrs: {
       isVisible: _vm.isPasswordConfirmationDialogVisible,
-      itemId: _vm.itemEditingDialogData.id
+      itemId: _vm.itemEditingDialogData.id,
+      context: this.passwordConfirmationContext
     },
     on: {
       "on-master-pass-confirmation-dialog-closed": _vm.handleMasterPasswordConfirmed

@@ -18,10 +18,19 @@
 <script>
 export default {
     name: 'VaultConfirmMasterPassword',
-    props: [
-        'isVisible',
-        'itemId'
-    ],
+    props: {
+        isVisible:{
+            type: Boolean,
+            default: false
+        },
+        itemId:{
+            default: null
+        },
+        context:{
+            type: String,
+            default: 'edit_item'
+        }
+    },
     data() {
         return {
             loading: false,
@@ -70,7 +79,7 @@ export default {
                                 offset: 19,
                                 message: res.data.message
                             });
-                            this.$emit('on-master-pass-confirmation-dialog-closed', { success: res.success, item: res.data});
+                            this.$emit('on-master-pass-confirmation-dialog-closed', { success: res.success, item: res.data, context:this.context});
                         } else {
                             this.$notify.error({
                                 title: 'Oops!',
