@@ -8,3 +8,5 @@ dist/
 package-lock.json
 .DS_Store
 *.sublime-*
+password_manager.zip
+assets/admin/js/fluent-mail-admin-app.js

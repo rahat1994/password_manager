@@ -10931,7 +10931,7 @@ var render = function render() {
       open: _vm.handleOpen,
       close: _vm.handleClose
     }
-  }, [_c("el-menu-item-group", {
+  }, [_vm.folders.length ? _c("el-menu-item-group", {
     attrs: {
       title: _vm.$t("Folders")
     }
@@ -10947,7 +10947,11 @@ var render = function render() {
         }
       }
     }, [_vm._v("\n                        " + _vm._s(folder.name) + "\n                    ")]);
-  }), 1)], 1)], 1), _vm._v(" "), _c("el-col", {
+  }), 1) : _c("el-menu-item-group", {
+    attrs: {
+      title: _vm.$t("No Folders")
+    }
+  })], 1)], 1), _vm._v(" "), _c("el-col", {
     attrs: {
       span: 18
     }

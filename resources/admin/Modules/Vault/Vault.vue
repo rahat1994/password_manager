@@ -5,13 +5,14 @@
                 <el-menu class="el-menu-vertical-demo menu" background-color="#545c64" text-color="#fff"
                     :default-active="activeMenuItem" active-text-color="#ffd04b" @open="handleOpen"
                     @close="handleClose">
-                    <el-menu-item-group :title="$t('Folders')">
-                        <el-menu-item v-bind:key="folder.id" v-for="folder in folders"
+                    <el-menu-item-group v-if="folders.length" :title="$t('Folders')" >
+                        <el-menu-item  v-bind:key="folder.id" v-for="folder in folders"
                             :index="'2-'+folder.id.toString()" @click="folderSelected(folder)">
                             {{ folder.name }}
                         </el-menu-item>
                     </el-menu-item-group>
-                </el-menu>
+                    <el-menu-item-group v-else :title="$t('No Folders')"></el-menu-item-group>
+                </el-menu>  
             </el-col>
 
             <el-col :span="18">
