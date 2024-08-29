@@ -7,7 +7,7 @@ Version:      0.0.1
 Author:       Rahat Baksh
 Author URI:   https://github.com/rahat1994
 License:      GPL2
-Text Domain:  fluent-smtp
+Text Domain:  password-manager
 Domain Path:  /language
 */
 
@@ -50,6 +50,6 @@ endif;
 
 /*
  * Thanks for checking the source code
- * Please check the full source here: https://github.com/WPManageNinja/fluent-smtp
+ * Please check the full source here: https://github.com/rahat1994/password_manager
  * Would love to welcome your pull request
 */

@@ -1,5 +1,5 @@
 {
-    "name": "fluent-smtp",
+    "name": "password-manager",
     "version": "1.0.0",
     "description": "---",
     "main": ".eslintrc.js",
@@ -9,15 +9,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/WPManageNinja/fluent-smtp.git"
+        "url": "git+https://github.com/rahat1994/password_manager.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/WPManageNinja/fluent-smtp/issues"
+        "url": "https://github.com/rahat1994/password_manager/issues"
     },
-    "homepage": "https://github.com/WPManageNinja/fluent-smtp#readme",
+    "homepage": "https://github.com/rahat1994/password_manager#readme",
     "devDependencies": {
         "@babel/plugin-syntax-dynamic-import": "^7.8.3",
         "@wordpress/hooks": "^3.2.0",
