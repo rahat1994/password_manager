@@ -7,7 +7,7 @@ Version:      0.0.1
 Author:       Rahat Baksh
 Author URI:   https://github.com/rahat1994
 License:      GPL2
-Text Domain:  password-manager
+Text Domain:  fluent-smtp
 Domain Path:  /language
 */
 
