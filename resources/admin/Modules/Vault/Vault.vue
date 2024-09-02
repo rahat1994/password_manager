@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!loadingItems" class="content" style="background-color: #f5f7fa;">
+    <div class="content" style="background-color: #f5f7fa;">
         <el-row class="tac" :gutter="20">
             <el-col :span="5" style="height:100%">
                 <el-menu class="el-menu-vertical-demo menu" background-color="#545c64" text-color="#fff"
@@ -15,7 +15,7 @@
                 </el-menu>  
             </el-col>
 
-            <el-col :span="18">
+            <el-col :span="18" v-if="!loadingItems">
 
                 <div class="fss_header">
                     <VaultBulkActions :selected="selectedVaultItems" @on-bulk-action="handleVaultBulkAction"
@@ -98,6 +98,12 @@
                 </div>
 
             </el-col>
+
+            <el-col :span="18" v-else>
+                <el-skeleton :animated="true" :rows="15"></el-skeleton>
+            </el-col>
+            
+            
         </el-row>
 
         <VaultItemCreationDialog :isItemCreationDialogVisible="isItemEditingDialogVisible" :folders="folders"
@@ -111,7 +117,6 @@
         <VaultConfirmMasterPassword :isVisible="isPasswordConfirmationDialogVisible" :itemId="itemEditingDialogData.id" 
          @on-master-pass-confirmation-dialog-closed="handleMasterPasswordConfirmed" :context="this.passwordConfirmationContext"/>
     </div>
-    <el-skeleton :animated="true" v-else class="fss_content" :rows="15"></el-skeleton>
 </template>
 <script type="text/babel">
     import { Loading } from "element-ui";
@@ -134,6 +139,7 @@
         data() {
             return {
                 contentHeaderTitle: "All Vault",
+                firstLoad: undefined,
                 filter: {
                     searchTerm: '',
                     folderId:null,
@@ -177,6 +183,11 @@
                 currentItem: {},
                 itemData:{}
             }
+        },
+        watch: {
+            $route(to, from) {
+                this.firstLoad = from.name == null ? true : false
+            },
         },
         methods: {
             handleItemDropDownCommand(command){
