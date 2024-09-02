@@ -4573,6 +4573,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       contentHeaderTitle: "All Vault",
+      firstLoad: undefined,
       filter: {
         searchTerm: '',
         folderId: null,
@@ -4612,6 +4613,11 @@ __webpack_require__.r(__webpack_exports__);
       currentItem: {},
       itemData: {}
     };
+  },
+  watch: {
+    $route: function $route(to, from) {
+      this.firstLoad = from.name == null ? true : false;
+    }
   },
   methods: {
     handleItemDropDownCommand: function handleItemDropDownCommand(command) {
@@ -5897,9 +5903,9 @@ var render = function render() {
     }
   }, [_c("el-menu-item", {
     attrs: {
-      index: "vault",
+      index: "/",
       route: {
-        name: "vault"
+        name: "Vault"
       }
     },
     domProps: {
@@ -10902,7 +10908,7 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return !_vm.loadingItems ? _c("div", {
+  return _c("div", {
     staticClass: "content",
     staticStyle: {
       "background-color": "#f5f7fa"
@@ -10951,7 +10957,7 @@ var render = function render() {
     attrs: {
       title: _vm.$t("No Folders")
     }
-  })], 1)], 1), _vm._v(" "), _c("el-col", {
+  })], 1)], 1), _vm._v(" "), !_vm.loadingItems ? _c("el-col", {
     attrs: {
       span: 18
     }
@@ -11165,7 +11171,16 @@ var render = function render() {
     on: {
       "current-change": _vm.changeCurrentPage
     }
-  })], 1)], 1)], 1), _vm._v(" "), _c("VaultItemCreationDialog", {
+  })], 1)], 1) : _c("el-col", {
+    attrs: {
+      span: 18
+    }
+  }, [_c("el-skeleton", {
+    attrs: {
+      animated: true,
+      rows: 15
+    }
+  })], 1)], 1), _vm._v(" "), _c("VaultItemCreationDialog", {
     attrs: {
       isItemCreationDialogVisible: _vm.isItemEditingDialogVisible,
       folders: _vm.folders,
@@ -11194,13 +11209,7 @@ var render = function render() {
     on: {
       "on-master-pass-confirmation-dialog-closed": _vm.handleMasterPasswordConfirmed
     }
-  })], 1) : _c("el-skeleton", {
-    staticClass: "fss_content",
-    attrs: {
-      animated: true,
-      rows: 15
-    }
-  });
+  })], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
